@@ -29,6 +29,8 @@ public class CustomPipeline : RenderPipeline
     private Vector4[] _visibleLightDirsOrPos = new Vector4[MaxVisibleLights];
     private Vector4[] _visibleLightAttenuation = new Vector4[MaxVisibleLights];
     private Vector4[] _visibleLightSpotDirections = new Vector4[MaxVisibleLights];
+
+    private RenderTexture _shadowMap;
     
     public CustomPipeline(bool dynamicBatching, bool instancing, bool perObjectLight)
     {
@@ -70,6 +72,8 @@ public class CustomPipeline : RenderPipeline
 #endif
 
         _culling = context.Cull(ref cullingParameters);
+
+        RenderShadows(context);
         
         context.SetupCameraProperties(camera);
         
@@ -109,10 +113,7 @@ public class CustomPipeline : RenderPipeline
         _drawingSettings.SetShaderPassName(1, new ShaderTagId("SRPDefaultUnlit"));
         _drawingSettings.sortingSettings = sortingSettings;
 
-        
-
-
-            var filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
+        var filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
         context.DrawRenderers(
             _culling, ref _drawingSettings, ref filteringSettings);
 
@@ -133,6 +134,12 @@ public class CustomPipeline : RenderPipeline
         _buffer.Clear();
 
         context.Submit();
+
+        if (_shadowMap)
+        {
+            RenderTexture.ReleaseTemporary(_shadowMap);
+            _shadowMap = null;
+        }
     }
 
     [Conditional("DEVELOPMENT_BUILD"), Conditional("UNITY_EDITOR")]
@@ -214,5 +221,12 @@ public class CustomPipeline : RenderPipeline
             }
             _culling.SetLightIndexMap(lightIndices);
         }
+    }
+
+    void RenderShadows(ScriptableRenderContext context)
+    {
+        _shadowMap = RenderTexture.GetTemporary(512, 512, 16, RenderTextureFormat.Shadowmap);
+        _shadowMap.filterMode = FilterMode.Bilinear;
+        _shadowMap.wrapMode = TextureWrapMode.Clamp;
     }
 }
