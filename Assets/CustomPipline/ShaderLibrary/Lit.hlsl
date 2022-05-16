@@ -8,8 +8,8 @@ CBUFFER_END
 
 CBUFFER_START(UnityPerDraw)
     float4x4 unity_ObjectToWorld;
-    float4 unity_PerObjectLightData;
-    float4 unity_PerObjectLightIndices;
+    float4 unity_LightData;
+    real4 unity_LightIndices[2];
 CBUFFER_END
 
 #define UNITY_MATRIX_M unity_ObjectToWorld
@@ -65,6 +65,7 @@ struct VSOut
     float4 clipPos : SV_POSITION;
     float3 worldNormal : TEXCOORD0;
     float3 worldPos : TEXCOORD1;
+    float3 vertexLighting : TEXCOORD2;
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
@@ -78,6 +79,13 @@ VSOut LitPassVertex (VSIn vsi)
     vso.clipPos = mul(unity_MatrixVP, worldPos);
     vso.worldNormal = mul((float3x3)UNITY_MATRIX_M, vsi.normal);
     vso.worldPos = worldPos.xyz;
+
+    vso.vertexLighting = 0;
+    for (int i = 4; i < min(unity_LightData.y, 16); i++)
+    {
+        int lightIndex = unity_LightIndices[1][i-4];
+        vso.vertexLighting += DiffuseLight(lightIndex, vso.worldNormal, vso.worldPos);
+    }
     
     return vso;
 }
@@ -88,10 +96,12 @@ float4 LitPassFragment(VSOut psi) : SV_TARGET
     float3 worldNormal = normalize(psi.worldNormal);
     float3 albedo = UNITY_ACCESS_INSTANCED_PROP(PerInstance, _Color).rgb;
     
-    float3 diffuseLight = 0;
-    for (int i = 0; i < MAX_VISIBLE_LIGHTS; i++)
+
+    float3 diffuseLight = psi.vertexLighting;
+    for (int i = 0; i < min(unity_LightData.y, 4); i++)
     {
-        diffuseLight += DiffuseLight(i, worldNormal, psi.worldPos);
+        int lightIndex = unity_LightIndices[0][i];
+        diffuseLight += DiffuseLight(lightIndex, worldNormal, psi.worldPos);
     }
 
     float3 color = diffuseLight * albedo;

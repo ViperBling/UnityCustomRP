@@ -23,17 +23,19 @@ public class CustomPipeline : RenderPipeline
     private static int _visibleLightDirsOrPosID = Shader.PropertyToID("_VisibleLightDirsOrPos");
     private static int _visibleLightAttenuationsID = Shader.PropertyToID("_VisibleLightAttenuations");
     private static int _visibleLightSpotDirectionsID = Shader.PropertyToID("_VisibleLightSpotDirections");
+    private static int _lightData = Shader.PropertyToID("unity_LightData");
 
     private Vector4[] _visibleLightColors = new Vector4[MaxVisibleLights];
     private Vector4[] _visibleLightDirsOrPos = new Vector4[MaxVisibleLights];
     private Vector4[] _visibleLightAttenuation = new Vector4[MaxVisibleLights];
     private Vector4[] _visibleLightSpotDirections = new Vector4[MaxVisibleLights];
-    private Vector4[] _lightIndicesOffsetAndCount = new Vector4[MaxVisibleLights];
     
-    public CustomPipeline(bool dynamicBatching, bool instancing)
+    public CustomPipeline(bool dynamicBatching, bool instancing, bool perObjectLight)
     {
         _drawingSettings.enableDynamicBatching = dynamicBatching;
         _drawingSettings.enableInstancing = instancing;
+        _drawingSettings.perObjectData =
+            perObjectLight ? PerObjectData.LightData | PerObjectData.LightIndices : PerObjectData.None;
     }
 
     // 新版的Unity要求实现这个抽象方法
@@ -77,6 +79,15 @@ public class CustomPipeline : RenderPipeline
             (clearFlags & CameraClearFlags.Color) != 0,
             camera.backgroundColor
         );
+
+        if (_culling.visibleLights.Length > 0)
+        {
+            ConfigureLights();
+        }
+        else
+        {
+            _buffer.SetGlobalVector(_lightData, Vector4.zero);
+        }
         
         ConfigureLights();
 
@@ -97,11 +108,11 @@ public class CustomPipeline : RenderPipeline
         
         _drawingSettings.SetShaderPassName(1, new ShaderTagId("SRPDefaultUnlit"));
         _drawingSettings.sortingSettings = sortingSettings;
-        
-        // _drawingSettings.perObjectData = lightsPerObjectFlags;
+
         
 
-        var filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
+
+            var filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
         context.DrawRenderers(
             _culling, ref _drawingSettings, ref filteringSettings);
 
@@ -191,8 +202,17 @@ public class CustomPipeline : RenderPipeline
                     attenuation.w = -outerCos * attenuation.z;
                 }
             }
-
             _visibleLightAttenuation[i] = attenuation;
+        }
+
+        if (_culling.visibleLights.Length > MaxVisibleLights)
+        {
+            NativeArray<int> lightIndices = _culling.GetLightIndexMap(Allocator.Temp);
+            for (int i = MaxVisibleLights; i < _culling.visibleLights.Length; i++)
+            {
+                lightIndices[i] = -1;
+            }
+            _culling.SetLightIndexMap(lightIndices);
         }
     }
 }
