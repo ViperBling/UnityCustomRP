@@ -30,19 +30,30 @@ public class CustomPipeline : RenderPipeline
     private static int _visibleLightSpotDirectionsID = Shader.PropertyToID("_VisibleLightSpotDirections");
     private static int _lightData = Shader.PropertyToID("unity_LightData");
 
+    private static int _shadowMapID = Shader.PropertyToID("_ShadowMap");
+    private static int _worldToShadowMatrixID = Shader.PropertyToID("_WorldToShadowMatrix");
+    private static int _shadowBiasID = Shader.PropertyToID("_ShadowBias");
+    private static int _shadowStrengthID = Shader.PropertyToID("_ShadowStrength");
+    private static int _shadowMapSizeID = Shader.PropertyToID("_ShadowMapSize");
+    private const string ShadowsSoftKeyword = "_SHADOWS_SOFT";
+
+    private int _shadowMapSize;
+
     private Vector4[] _visibleLightColors = new Vector4[MaxVisibleLights];
     private Vector4[] _visibleLightDirsOrPos = new Vector4[MaxVisibleLights];
     private Vector4[] _visibleLightAttenuation = new Vector4[MaxVisibleLights];
     private Vector4[] _visibleLightSpotDirections = new Vector4[MaxVisibleLights];
 
     private RenderTexture _shadowMap;
-    
-    public CustomPipeline(bool dynamicBatching, bool instancing, bool perObjectLight)
+
+    public CustomPipeline(bool dynamicBatching, bool instancing, bool perObjectLight, int shadowMapSize)
     {
         _drawingSettings.enableDynamicBatching = dynamicBatching;
         _drawingSettings.enableInstancing = instancing;
         _drawingSettings.perObjectData =
             perObjectLight ? PerObjectData.LightData | PerObjectData.LightIndices : PerObjectData.None;
+        
+        _shadowMapSize = shadowMapSize;
     }
 
     // 新版的Unity要求实现这个抽象方法
@@ -230,7 +241,7 @@ public class CustomPipeline : RenderPipeline
 
     void RenderShadows(ScriptableRenderContext context)
     {
-        _shadowMap = RenderTexture.GetTemporary(512, 512, 16, RenderTextureFormat.Shadowmap);
+        _shadowMap = RenderTexture.GetTemporary(_shadowMapSize, _shadowMapSize, 32, RenderTextureFormat.Shadowmap);
         _shadowMap.filterMode = FilterMode.Bilinear;
         _shadowMap.wrapMode = TextureWrapMode.Clamp;
         
@@ -247,13 +258,40 @@ public class CustomPipeline : RenderPipeline
         Matrix4x4 viewMatrix, projectionMatrix;
         ShadowSplitData splitData;
         _culling.ComputeSpotShadowMatricesAndCullingPrimitives(
-            1, out viewMatrix, out projectionMatrix, out splitData);
+            0, out viewMatrix, out projectionMatrix, out splitData);
         _shadowBuffer.SetViewProjectionMatrices(viewMatrix, projectionMatrix);
+        _shadowBuffer.SetGlobalFloat(_shadowBiasID, _culling.visibleLights[0].light.shadowBias);
         context.ExecuteCommandBuffer(_shadowBuffer);
         _shadowBuffer.Clear();
 
-        var shadowSettings = new ShadowDrawingSettings(_culling, 1);
+        var shadowSettings = new ShadowDrawingSettings(_culling, 0);
         context.DrawShadows(ref shadowSettings);
+
+        if (SystemInfo.usesReversedZBuffer)
+        {
+            projectionMatrix.m20 = -projectionMatrix.m20;
+            projectionMatrix.m21 = -projectionMatrix.m21;
+            projectionMatrix.m22 = -projectionMatrix.m22;
+            projectionMatrix.m23 = -projectionMatrix.m23;
+        }
+
+        // var scaleOffset = Matrix4x4.TRS(Vector3.one * 0.5f, Quaternion.identity, Vector3.one * 0.5f);
+        var scaleOffset = Matrix4x4.identity;
+        scaleOffset.m00 = scaleOffset.m11 = scaleOffset.m22 = 0.5f;
+        scaleOffset.m03 = scaleOffset.m13 = scaleOffset.m23 = 0.5f;
+        Matrix4x4 worldToShadowMatrix = scaleOffset * (projectionMatrix * viewMatrix);
+        
+        _shadowBuffer.SetGlobalMatrix(_worldToShadowMatrixID, worldToShadowMatrix);
+        _shadowBuffer.SetGlobalTexture(_shadowMapID, _shadowMap);
+        _shadowBuffer.SetGlobalFloat(_shadowStrengthID, _culling.visibleLights[0].light.shadowStrength);
+
+        float invShadowMapSize = 1.0f / _shadowMapSize;
+        _shadowBuffer.SetGlobalVector(
+            _shadowMapSizeID, new Vector4(
+                invShadowMapSize, invShadowMapSize, _shadowMapSize, _shadowMapSize));
+
+        CoreUtils.SetKeyword(
+            _shadowBuffer, ShadowsSoftKeyword, _culling.visibleLights[0].light.shadows == LightShadows.Soft);
         
         _shadowBuffer.EndSample("Render Shadows");
         context.ExecuteCommandBuffer(_shadowBuffer);
