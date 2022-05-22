@@ -23,5 +23,24 @@ Shader "CustomPipeline/Lit"
             
             ENDHLSL
         }
+        
+        Pass
+        {
+            Tags { "LightMode" = "ShadowCaster" }    
+            
+            HLSLPROGRAM
+
+            #pragma target 3.5
+
+            #pragma multi_compile_instancing
+            #pragma instancing_options assumeuniformscaling
+
+            #pragma vertex ShadowCasterVS
+            #pragma fragment ShadowCasterPS
+
+             #include "Assets/CustomPipline/ShaderLibrary/ShadowCaster.hlsl"
+            
+            ENDHLSL
+        }
     }    
 }

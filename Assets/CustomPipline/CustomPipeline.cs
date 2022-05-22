@@ -18,6 +18,11 @@ public class CustomPipeline : RenderPipeline
         name = "Render Camera"
     };
 
+    private CommandBuffer _shadowBuffer = new CommandBuffer
+    {
+        name = "Render Shadows"
+    };
+
     private const int MaxVisibleLights = 16;
     private static int _visibleLightColorsID = Shader.PropertyToID("_VisibleLightColors");
     private static int _visibleLightDirsOrPosID = Shader.PropertyToID("_VisibleLightDirsOrPos");
@@ -228,5 +233,30 @@ public class CustomPipeline : RenderPipeline
         _shadowMap = RenderTexture.GetTemporary(512, 512, 16, RenderTextureFormat.Shadowmap);
         _shadowMap.filterMode = FilterMode.Bilinear;
         _shadowMap.wrapMode = TextureWrapMode.Clamp;
+        
+        // 告知GPU将shadowbuffer渲染到shadowmap
+        CoreUtils.SetRenderTarget(
+            _shadowBuffer, _shadowMap,
+            RenderBufferLoadAction.DontCare, RenderBufferStoreAction.Store,
+            ClearFlag.Depth);
+        
+        _shadowBuffer.BeginSample("Render Shadows");
+        context.ExecuteCommandBuffer(_shadowBuffer);
+        _shadowBuffer.Clear();
+
+        Matrix4x4 viewMatrix, projectionMatrix;
+        ShadowSplitData splitData;
+        _culling.ComputeSpotShadowMatricesAndCullingPrimitives(
+            1, out viewMatrix, out projectionMatrix, out splitData);
+        _shadowBuffer.SetViewProjectionMatrices(viewMatrix, projectionMatrix);
+        context.ExecuteCommandBuffer(_shadowBuffer);
+        _shadowBuffer.Clear();
+
+        var shadowSettings = new ShadowDrawingSettings(_culling, 1);
+        context.DrawShadows(ref shadowSettings);
+        
+        _shadowBuffer.EndSample("Render Shadows");
+        context.ExecuteCommandBuffer(_shadowBuffer);
+        _shadowBuffer.Clear();
     }
 }
