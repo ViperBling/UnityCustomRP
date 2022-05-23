@@ -15,4 +15,4 @@ MonoBehaviour:
   dynamicBatching: 0
   instancing: 1
   perObjectLight: 1
-  shadowMapSize: 2048
+  shadowMapSize: 4096
