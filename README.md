@@ -1,2 +1,2 @@
-# UnityCutomRP
+# UnityCustomRP
 Cutom Unity Rendeing Pipeline
