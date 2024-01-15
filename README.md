@@ -1,2 +1,2 @@
 # UnityCustomRP
-Cutom Unity Rendeing Pipeline
+Custom Unity Rendeing Pipeline
