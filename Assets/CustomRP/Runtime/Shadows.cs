@@ -1,3 +1,4 @@
+using Palmmedia.ReportGenerator.Core;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -60,24 +61,24 @@ public class Shadows
             1.0f / _settings.maxDistance, 
             1.0f / _settings.distanceFade, 
             1.0f / (1.0f - fade * fade)));
-        SetKeywords();
+        SetKeywords(directionalFilterKeywords, (int)_settings.directional.filter - 1);
+        SetKeywords(cascadeBlendKeywords, (int)_settings.directional.cascadeBlend - 1);
         _buffer.SetGlobalVector(shadowAtlasSizeID, new Vector4(atlasSize, 1.0f / atlasSize));
         _buffer.EndSample(BufferName);
         ExecuteBuffer();
     }
 
-    void SetKeywords()
+    void SetKeywords(string[] keywords, int enabledIndex)
     {
-        int enabledIndex = (int)_settings.directional.filter - 1;
-        for (int i = 0; i < directionalFilterKeywords.Length; i++)
+        for (int i = 0; i < keywords.Length; i++)
         {
             if (i == enabledIndex)
             {
-                _buffer.EnableShaderKeyword(directionalFilterKeywords[i]);
+                _buffer.EnableShaderKeyword(keywords[i]);
             }
             else
             {
-                _buffer.DisableShaderKeyword(directionalFilterKeywords[i]);
+                _buffer.DisableShaderKeyword(keywords[i]);
             }
         }
     }
@@ -91,6 +92,7 @@ public class Shadows
         int tileOffset = index * cascadeCount;
         Vector3 ratios = _settings.directional.CascadeRatios;
 
+        float cullingFactor = Mathf.Max(0f, 0.8f - _settings.directional.cascadeFade);
         for (int i = 0; i < cascadeCount; i++)
         {
             // 根据一个视图和投影矩阵来确定阴影的投射范围
@@ -99,6 +101,7 @@ public class Shadows
                 light.VisibleLightIndex, 
                 i, cascadeCount, ratios, tileSize, light.NearPlaneOffset,
                 out Matrix4x4 viewMatrix, out Matrix4x4 projMatrix, out ShadowSplitData splitData);
+            splitData.shadowCascadeBlendCullingFactor = cullingFactor;
             shadowSettings.splitData = splitData;
             // 从splitData中获取剔除球
             if (index == 0)
@@ -234,4 +237,5 @@ public class Shadows
     Vector4[] _cascadeCullingSpheres = new Vector4[MaxCascades];
     Vector4[] _cascadeData = new Vector4[MaxCascades];
     string[] directionalFilterKeywords = {"_DIRECTIONAL_PCF3", "_DIRECTIONAL_PCF5", "_DIRECTIONAL_PCF7"};
+    static string[] cascadeBlendKeywords = { "_CASCADE_BLEND_SOFT", "_CASCADE_BLEND_DITHER" };
 }

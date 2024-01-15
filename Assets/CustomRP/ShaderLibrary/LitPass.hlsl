@@ -69,8 +69,11 @@ float4 LitPassFragment(PSInput psIn) : SV_TARGET
     float4 baseColor = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _BaseColor);
     float4 base = baseColor * baseMap;
 
-    #if defined(_CLIPPING)
-    clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Cutoff));
+    #if defined(_SHADOWS_CLIP)
+        clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Cutoff));
+    #elif defined(_SHADOWS_DITHER)
+        float dither = InterleavedGradientNoise(psIn.positionCS.xy, 0);
+        clip(base.a - dither)
     #endif
 
     Surface surface;
@@ -82,6 +85,7 @@ float4 LitPassFragment(PSInput psIn) : SV_TARGET
     surface.alpha = base.a;
     surface.metallic = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Metallic);
     surface.smoothness = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Smoothness);
+    surface.dither = InterleavedGradientNoise(psIn.positionCS.xy, 0);
     
     #if defined(_PREMULTIPLY_ALPHA)
         BRDF brdf = GetBRDF(surface, true);

@@ -11,4 +11,6 @@ struct Surface
 
     float metallic;
     float smoothness;
+
+    float dither;
 };

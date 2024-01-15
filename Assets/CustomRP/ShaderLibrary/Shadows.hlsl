@@ -75,6 +75,12 @@ ShadowData GetShadowData(Surface surfaceWS)
         }
     }
     if (i == _CascadeCount) data.strength = 0.0;
+    #ifdef _CASCADE_BLEND_DITHER
+        else if (data.cascadeBlend < surfaceWS.dither) i += 1;
+    #endif
+    #ifndef _CASCADE_BLEND_SOFT
+        data.cascadeBlend = 1.0;
+    #endif
     data.cascadeIndex = i;
     return  data;
 }
@@ -104,6 +110,9 @@ float FilterDirectionalShadow(float3 positionSTS)
 
 float GetDirectionalShadowAttenuation(DirectionalShadowData directionalShadowData, ShadowData globalShadowData, Surface surfaceWS)
 {
+    #if !defined(_RECEIVE_SHADOWS)
+		return 1.0;
+	#endif
     if (directionalShadowData.strength <= 0.0) return 1.0;
     float3 normalBias = surfaceWS.normal * (directionalShadowData.normalBias * _CascadeData[globalShadowData.cascadeIndex].y);
     // 把position转换到shadow tile space，然后采样ShadowMap

@@ -841,6 +841,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: VariousBalls
       objectReference: {fileID: 0}
+    - target: {fileID: 4788784466639128138, guid: b6fb8ed6a70ab7b42bcbc9f976e7a98f, type: 3}
+      propertyPath: baseMap
+      value: 
+      objectReference: {fileID: 2800000, guid: 2fe54c7099b7ef24b8c63b600970e199, type: 3}
     - target: {fileID: 5563311165673582035, guid: b6fb8ed6a70ab7b42bcbc9f976e7a98f, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.98
@@ -881,6 +885,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5937432337410666164, guid: b6fb8ed6a70ab7b42bcbc9f976e7a98f, type: 3}
+      propertyPath: baseMap
+      value: 
+      objectReference: {fileID: 2800000, guid: 2fe54c7099b7ef24b8c63b600970e199, type: 3}
+    - target: {fileID: 6041750788772753389, guid: b6fb8ed6a70ab7b42bcbc9f976e7a98f, type: 3}
+      propertyPath: baseMap
+      value: 
+      objectReference: {fileID: 2800000, guid: 2fe54c7099b7ef24b8c63b600970e199, type: 3}
+    - target: {fileID: 6326038793396438489, guid: b6fb8ed6a70ab7b42bcbc9f976e7a98f, type: 3}
+      propertyPath: baseMap
+      value: 
+      objectReference: {fileID: 2800000, guid: 2fe54c7099b7ef24b8c63b600970e199, type: 3}
+    - target: {fileID: 8622648831046732832, guid: b6fb8ed6a70ab7b42bcbc9f976e7a98f, type: 3}
+      propertyPath: baseMap
+      value: 
+      objectReference: {fileID: 2800000, guid: 2fe54c7099b7ef24b8c63b600970e199, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -31,8 +31,25 @@ public class CustomShaderGUI : ShaderGUI
 		set => SetProperty("_ZWrite", value ? 1f : 0f);
 	}
 
+	enum ShadowMode
+	{
+		On, Clip, Dither, Off
+	}
+	ShadowMode Shadows
+	{
+		set
+		{
+			if (SetProperty("_Shadows", (float)value))
+			{
+				SetKeyword("_SHADOWS_CLIP", value == ShadowMode.Clip);
+				SetKeyword("_SHADOWS_DITHER", value == ShadowMode.Dither);
+			}
+		}
+	}
+
 	public override void OnGUI (MaterialEditor materialEditor, MaterialProperty[] properties)
 	{
+		EditorGUI.BeginChangeCheck();
 		base.OnGUI(materialEditor, properties);
 		_editor = materialEditor;
 		_materials = materialEditor.targets;
@@ -46,6 +63,10 @@ public class CustomShaderGUI : ShaderGUI
 			ClipPreset();
 			FadePreset();
 			TransparentPreset();
+		}
+		if (EditorGUI.EndChangeCheck())
+		{
+			SetShadowCasterPass();
 		}
 	}
 
@@ -109,6 +130,18 @@ public class CustomShaderGUI : ShaderGUI
 			return true;
 		}
 		return false;
+	}
+
+	void SetShadowCasterPass() 
+	{
+		MaterialProperty shadows = FindProperty("_Shadows", _properties, false);
+		if (shadows == null || shadows.hasMixedValue) { return; }
+
+		bool enabled = shadows.floatValue < (float)ShadowMode.Off;
+		foreach (Material m in _materials)
+		{
+			m.SetShaderPassEnabled("ShadowCaster", enabled);
+		}
 	}
 
 	bool HasProperty (string name) =>
