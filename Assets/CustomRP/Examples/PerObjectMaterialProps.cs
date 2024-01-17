@@ -19,6 +19,7 @@ public class PerObjectMaterialProps : MonoBehaviour
             _block.SetTexture(_baseMapID, baseMap);
         }
         _block.SetColor(_baseColorID, baseColor);
+        _block.SetFloat(_emissiveID, EmissiveIntensity);
         _block.SetFloat(_cutoffID, cutoff);
         _block.SetFloat(_metallicID, metallic);
         _block.SetFloat(_smoothnessID, smoothness);
@@ -33,6 +34,7 @@ public class PerObjectMaterialProps : MonoBehaviour
     // 和Shader中的属性标识符对应，根据这个ID来设置对应的属性
     static int 
         _baseColorID = Shader.PropertyToID("_BaseColor"),
+        _emissiveID = Shader.PropertyToID("_EmissiveIntensity"),
         _baseMapID = Shader.PropertyToID("_BaseMap"),
         _cutoffID = Shader.PropertyToID("_Cutoff"),
         _metallicID = Shader.PropertyToID("_Metallic"),
@@ -40,6 +42,8 @@ public class PerObjectMaterialProps : MonoBehaviour
 
     [SerializeField]
     Color baseColor = Color.white;
+    [SerializeField]
+    float EmissiveIntensity = 1.0f;
     [SerializeField]
     Texture baseMap;
 

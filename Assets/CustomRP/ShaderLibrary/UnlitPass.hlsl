@@ -8,6 +8,7 @@ SAMPLER(sampler_BaseMap);
 UNITY_INSTANCING_BUFFER_START(UnityPerMaterial)
     UNITY_DEFINE_INSTANCED_PROP(float4, _BaseMap_ST)
     UNITY_DEFINE_INSTANCED_PROP(float4, _BaseColor)
+    UNITY_DEFINE_INSTANCED_PROP(float, _EmissiveIntensity)
     UNITY_DEFINE_INSTANCED_PROP(float, _Cutoff)
 UNITY_INSTANCING_BUFFER_END(UnityPerMaterial)
 
@@ -48,7 +49,7 @@ float4 UnlitPassFragment(PSInput psIn) : SV_TARGET
     float4 baseMap = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, psIn.baseUV);
     // 根据InstanceID来取颜色
     float4 baseColor = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _BaseColor);
-    float4 base = baseColor * baseMap;
+    float4 base = baseColor * baseMap * UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _EmissiveIntensity);
     
     #if defined(_CLIPPING)
         clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Cutoff));

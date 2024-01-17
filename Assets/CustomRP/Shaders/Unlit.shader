@@ -4,6 +4,7 @@ Shader "CustomRP/Unlit"
     {
         _BaseMap ("Texture", 2D) = "white" {}
         _BaseColor ("Color", Color) = (1.0, 1.0, 1.0, 1.0)
+        _EmissiveIntensity ("Emissive Intensity", Float) = 1
         _Cutoff ("Alpha CutOff", Range(0.0, 1.0)) = 0.5
         [Toggle(_CLIPPING)] _Clipping ("Alpha Clipping", Float) = 0
         
