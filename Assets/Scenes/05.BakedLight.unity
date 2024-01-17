@@ -247,7 +247,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1079443874
+--- !u!1001 &1815493014
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -255,17 +255,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2822441125147712834, guid: c118801c0b2401046918b1ac5c77c7fd, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 28e700a3be5149c46adfbe756ba2c7f2, type: 2}
     - target: {fileID: 7378865545121925692, guid: c118801c0b2401046918b1ac5c77c7fd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.76
+      value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 7378865545121925692, guid: c118801c0b2401046918b1ac5c77c7fd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.29
+      value: -0.53
       objectReference: {fileID: 0}
     - target: {fileID: 7378865545121925692, guid: c118801c0b2401046918b1ac5c77c7fd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -306,33 +302,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7398698398417072938, guid: c118801c0b2401046918b1ac5c77c7fd, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1079443876}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c118801c0b2401046918b1ac5c77c7fd, type: 3}
---- !u!1 &1079443875 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7398698398417072938, guid: c118801c0b2401046918b1ac5c77c7fd, type: 3}
-  m_PrefabInstance: {fileID: 1079443874}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1079443876
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1079443875}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c9515b83782a7b40be7cbfbf2515b26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseColor: {r: 1, g: 1, b: 1, a: 1}
-  baseMap: {fileID: 0}
-  cutoff: 0.5
-  metallic: 0
-  smoothness: 0.5
 --- !u!1 &1932143602
 GameObject:
   m_ObjectHideFlags: 0
@@ -433,4 +404,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 715667869}
   - {fileID: 120221477}
-  - {fileID: 1079443874}
+  - {fileID: 1815493014}

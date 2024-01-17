@@ -125,7 +125,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 0, g: 1, b: 0, a: 1}
   EmissiveIntensity: 1
-  baseMap: {fileID: 0}
+  baseMap: {fileID: 10305, guid: 0000000000000000f000000000000000, type: 0}
   cutoff: 0.5
   metallic: 0
   smoothness: 0.5
@@ -148,7 +148,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 1, g: 0, b: 0, a: 1}
   EmissiveIntensity: 1
-  baseMap: {fileID: 0}
+  baseMap: {fileID: 10305, guid: 0000000000000000f000000000000000, type: 0}
   cutoff: 0.5
   metallic: 0
   smoothness: 0.5
@@ -171,7 +171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseColor: {r: 1, g: 1, b: 1, a: 1}
   EmissiveIntensity: 1
-  baseMap: {fileID: 0}
+  baseMap: {fileID: 10305, guid: 0000000000000000f000000000000000, type: 0}
   cutoff: 0.5
   metallic: 0
   smoothness: 0.5
