@@ -11,7 +11,7 @@ public partial class CameraRenderer
     Camera m_Camera;
     CullingResults m_CullingResults;
 
-    public void Render(ScriptableRenderContext context, Camera camera)
+    public void Render(ScriptableRenderContext context, Camera camera, bool useDynamicBatching, bool useGPUInstancing)
     {
         m_Context = context;
         m_Camera = camera;
@@ -24,7 +24,7 @@ public partial class CameraRenderer
         }
         
         Setup();
-        DrawVisibleGeometry();
+        DrawVisibleGeometry(useDynamicBatching, useGPUInstancing);
         DrawUnsupportedShaders();
         DrawGizmos();
         Submit();
@@ -66,13 +66,17 @@ public partial class CameraRenderer
         m_CmdBuffer.Clear();
     }
 
-    void DrawVisibleGeometry()
+    void DrawVisibleGeometry(bool useDynamicBatching, bool useGPUInstancing)
     {
         var sortingSettings = new SortingSettings(m_Camera)
         {
             criteria = SortingCriteria.CommonOpaque
         };
-        var drawingSettings = new DrawingSettings(m_UnlitShaderTagID, sortingSettings);
+        var drawingSettings = new DrawingSettings(m_UnlitShaderTagID, sortingSettings)
+        {
+            enableDynamicBatching = useDynamicBatching,
+            enableInstancing = useGPUInstancing
+        };
         var filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
         
         m_Context.DrawRenderers(m_CullingResults, ref drawingSettings, ref filteringSettings);
