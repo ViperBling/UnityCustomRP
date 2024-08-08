@@ -737,15 +737,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2137313918910100735, guid: 2cf2962d6f896d94a8ef1ce5906d135f, type: 3}
       propertyPath: m_BaseColor.b
-      value: 0.6656481
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2137313918910100735, guid: 2cf2962d6f896d94a8ef1ce5906d135f, type: 3}
       propertyPath: m_BaseColor.g
-      value: 0.20087217
+      value: 0.5020593
       objectReference: {fileID: 0}
     - target: {fileID: 2137313918910100735, guid: 2cf2962d6f896d94a8ef1ce5906d135f, type: 3}
       propertyPath: m_BaseColor.r
-      value: 0.6981132
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7613635093399449576, guid: 2cf2962d6f896d94a8ef1ce5906d135f, type: 3}
       propertyPath: m_Name
@@ -910,13 +910,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2140931367}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.23799267, y: -0.009617746, z: 0.0023591204, w: -0.9712165}
-  m_LocalPosition: {x: -0.17571175, y: 2.9049463, z: -6.318658}
+  m_LocalRotation: {x: 0.2588191, y: 0, z: 0, w: 0.9659258}
+  m_LocalPosition: {x: 0, y: 3, z: -7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
 --- !u!1001 &7552461679383219195
 PrefabInstance:
   m_ObjectHideFlags: 0
