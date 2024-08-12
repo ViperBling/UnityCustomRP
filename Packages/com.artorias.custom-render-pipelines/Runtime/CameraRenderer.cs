@@ -6,6 +6,8 @@ public partial class CameraRenderer
 {
     private const string m_CommandBufferName = "Render Camera";
     static ShaderTagId m_UnlitShaderTagID = new ShaderTagId("SRPDefaultUnlit");
+    static ShaderTagId m_LitShaderTagID = new ShaderTagId("CustomRPLit");
+    
     private CommandBuffer m_CmdBuffer = new CommandBuffer { name = m_CommandBufferName };
     private ScriptableRenderContext m_Context;
     Camera m_Camera;
@@ -77,6 +79,7 @@ public partial class CameraRenderer
             enableDynamicBatching = useDynamicBatching,
             enableInstancing = useGPUInstancing
         };
+        drawingSettings.SetShaderPassName(1, m_LitShaderTagID);
         var filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
         
         m_Context.DrawRenderers(m_CullingResults, ref drawingSettings, ref filteringSettings);
