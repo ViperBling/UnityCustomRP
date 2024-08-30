@@ -1,6 +1,9 @@
 ﻿#pragma once
 
 #include "Packages/com.artorias.custom-render-pipelines/ShaderLibrary/Common.hlsl"
+#include "Packages/com.artorias.custom-render-pipelines/ShaderLibrary/SurfaceData.hlsl"
+#include "Packages/com.artorias.custom-render-pipelines/ShaderLibrary/RealtimeLights.hlsl"
+#include "Packages/com.artorias.custom-render-pipelines/ShaderLibrary/Lighting.hlsl"
 
 
 TEXTURE2D(_BaseMap);        SAMPLER(sampler_BaseMap);

@@ -30,6 +30,13 @@ float4 LitPassFragment(Varyings fsIn) : SV_TARGET
     clip(base.a - UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _Cutoff));
     #endif
     // 虽然顶点已经归一化了Normal，但是在这里还是要再次归一化，因为在顶点着色器和片段着色器之间，Normal会被插值，插值后的Normal不一定是单位向量
-    base.rgb = normalize(fsIn.normalWS);
-    return base;
+    
+    SurfaceData surfaceData;
+    surfaceData.albedo = base.rgb;
+    surfaceData.normal = normalize(fsIn.normalWS);
+    surfaceData.alpha = base.a;
+
+    float3 color = CalculateLighting(surfaceData);
+    
+    return float4(color, surfaceData.alpha);
 }
