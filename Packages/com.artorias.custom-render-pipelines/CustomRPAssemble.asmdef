@@ -1,0 +1,30 @@
+{
+    "name": "CustomRPAssemble",
+    "rootNamespace": "CustomRPAssemble",
+    "references": [
+        "GUID:2665a8d13d1b3f18800f46e256720795",
+        "GUID:9c6dda6c7922c624cb7ea9a7f1c7d54a",
+        "GUID:b75d3cd3037d383a8d1e2f9a26d73d8a",
+        "GUID:3eae0364be2026648bf74846acb8a731",
+        "GUID:2a69708d171a17043a9d0ad45f205cfe",
+        "GUID:6e5480588ffa37d4f82fe96c45e8ce9c",
+        "GUID:df380645f10b7bc4b97d4f5eb6303d95",
+        "GUID:69257879134bba646869b21467b3338d",
+        "GUID:bf043f86dbf1bda4398ec83eebe40b8c",
+        "GUID:46a67ded66a63de48b9329c593fc08de",
+        "GUID:4fd6538c1c56b409fb53fdf0183170ec",
+        "GUID:343deaaf83e0cee4ca978e7df0b80d21",
+        "GUID:2bafac87e7f4b9b418d9448d219b01ab"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        ""
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

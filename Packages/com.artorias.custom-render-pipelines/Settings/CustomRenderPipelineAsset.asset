@@ -12,6 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19d52d0b112d06b4e93c9ae3ebba3be2, type: 3}
   m_Name: CustomRenderPipelineAsset
   m_EditorClassIdentifier: 
-  m_UseDynamicBatching: 1
-  m_UseGPUInstancing: 1
-  m_UseSRPBatcher: 1
+  m_RPSettings:
+    m_CameraBuffer:
+      m_AllowHDR: 1
+      m_CopyColor: 0
+      m_CopyColorReflection: 0
+      m_CopyDepth: 0
+      m_CopyDepthReflection: 0
+      m_RenderScale: 1
+      m_BicubicRescaling: 0
+    m_UseSRPBatch: 1
+    m_ColorLUTResolution: 32
+    m_CameraRendererShader: {fileID: 4800000, guid: d27cdad93a634f5685fb2ce69227a11f, type: 3}
+    m_CameraDebuggerShader: {fileID: 0}
+  m_CameraBuffer:
+    m_AllowHDR: 1
+    m_CopyColor: 0
+    m_CopyColorReflection: 0
+    m_CopyDepth: 0
+    m_CopyDepthReflection: 0
+    m_RenderScale: 1
+    m_BicubicRescaling: 0
+  m_UseSRPBatch: 1
+  m_ColorLUTResolution: 32
+  m_CameraRendererShader: {fileID: 0}

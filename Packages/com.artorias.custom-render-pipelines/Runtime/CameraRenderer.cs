@@ -1,97 +1,112 @@
-﻿using System.Collections;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.RenderGraphModule;
 
-public partial class CameraRenderer
+namespace CustomRP
 {
-    private const string m_CommandBufferName = "Render Camera";
-    static ShaderTagId m_UnlitShaderTagID = new ShaderTagId("SRPDefaultUnlit");
-    static ShaderTagId m_LitShaderTagID = new ShaderTagId("CustomRPLit");
-    
-    private CommandBuffer m_CmdBuffer = new CommandBuffer { name = m_CommandBufferName };
-    private ScriptableRenderContext m_Context;
-    Camera m_Camera;
-    CullingResults m_CullingResults;
-    Lighting m_Lighting = new Lighting();
-
-    public void Render(ScriptableRenderContext context, Camera camera, bool useDynamicBatching, bool useGPUInstancing)
+    public class CameraRenderer
     {
-        m_Context = context;
-        m_Camera = camera;
+        public const float m_RenderScaleMin = 0.1f, m_RenderScaleMax = 2f;
+        static readonly CameraSettings m_DefaultCameraSettings = new();
+ 
+        private readonly Material m_Material;
 
-        PrepareBuffer();
-        PrepareForSceneWindow();
-        if (!Cull())
+        public CameraRenderer(Shader shader, Shader cameraDebugShader)
         {
-            return;
+            m_Material = CoreUtils.CreateEngineMaterial(shader);
+            CameraDebugger.Initialize(cameraDebugShader);
         }
-        
-        Setup();
-        m_Lighting.Setup(context, m_CullingResults);
-        DrawVisibleGeometry(useDynamicBatching, useGPUInstancing);
-        DrawUnsupportedShaders();
-        DrawGizmos();
-        Submit();
-    }
 
-    bool Cull()
-    {
-        if (m_Camera.TryGetCullingParameters(out ScriptableCullingParameters p))
+        public void Dispose()
         {
-            m_CullingResults = m_Context.Cull(ref p);
-            return true;
+            CoreUtils.Destroy(m_Material);
+            CameraDebugger.Cleanup();
         }
-        return false;
-    }
 
-    void Setup()
-    {
-        m_Context.SetupCameraProperties(m_Camera);
-        CameraClearFlags flags = m_Camera.clearFlags;
-        m_CmdBuffer.ClearRenderTarget(
-            flags <= CameraClearFlags.Depth,
-            flags == CameraClearFlags.Color,
-            flags == CameraClearFlags.Color ? m_Camera.backgroundColor.linear : Color.clear
-        );
-        m_CmdBuffer.BeginSample(m_SampleName);
-        ExecuteBuffer();
-    }
-
-    void Submit()
-    {
-        m_CmdBuffer.EndSample(m_SampleName);
-        ExecuteBuffer();
-        m_Context.Submit();
-    }
-
-    void ExecuteBuffer()
-    {
-        m_Context.ExecuteCommandBuffer(m_CmdBuffer);
-        m_CmdBuffer.Clear();
-    }
-
-    void DrawVisibleGeometry(bool useDynamicBatching, bool useGPUInstancing)
-    {
-        var sortingSettings = new SortingSettings(m_Camera)
+        public void Render(RenderGraph renderGraph, ScriptableRenderContext context, Camera camera, CustomRenderPipelineSettings settings)
         {
-            criteria = SortingCriteria.CommonOpaque
-        };
-        var drawingSettings = new DrawingSettings(m_UnlitShaderTagID, sortingSettings)
-        {
-            enableDynamicBatching = useDynamicBatching,
-            enableInstancing = useGPUInstancing
-        };
-        drawingSettings.SetShaderPassName(1, m_LitShaderTagID);
-        var filteringSettings = new FilteringSettings(RenderQueueRange.opaque);
-        
-        m_Context.DrawRenderers(m_CullingResults, ref drawingSettings, ref filteringSettings);
-        
-        m_Context.DrawSkybox(m_Camera);
-        
-        sortingSettings.criteria = SortingCriteria.CommonTransparent;
-        drawingSettings.sortingSettings = sortingSettings;
-        filteringSettings.renderQueueRange = RenderQueueRange.transparent;
-        
-        m_Context.DrawRenderers(m_CullingResults, ref drawingSettings, ref filteringSettings);
+            CameraBufferSettings bufferSettings = settings.m_CameraBuffer;
+            
+            ProfilingSampler cameraSampler;
+            CameraSettings cameraSettings;
+
+            if (camera.TryGetComponent(out CustomRenderPipelineCamera crpCamera))
+            {
+                cameraSampler = crpCamera.m_Sampler;
+                cameraSettings = crpCamera.m_CameraSettings;
+            }
+            else
+            {
+                cameraSampler = ProfilingSampler.Get(camera.cameraType);
+                cameraSettings = m_DefaultCameraSettings;
+            }
+            
+            bool useColorTexture, useDepthTexture;
+            if (camera.cameraType == CameraType.Reflection)
+            {
+                useColorTexture = bufferSettings.m_CopyColorReflection;
+                useDepthTexture = bufferSettings.m_CopyDepthReflection;
+            }
+            else
+            {
+                useColorTexture = bufferSettings.m_CopyColor && cameraSettings.m_CopyColor;
+                useDepthTexture = bufferSettings.m_CopyDepth && cameraSettings.m_CopyDepth;
+            }
+            
+            float renderScale = cameraSettings.GetRenderScale(bufferSettings.m_RenderScale);
+            bool useScaleRendering = renderScale < 0.99f || renderScale > 1.01f;
+
+#if UNITY_EDITOR
+            if (camera.cameraType == CameraType.SceneView)
+            {
+                ScriptableRenderContext.EmitWorldGeometryForSceneView(camera);
+                useScaleRendering = false;
+            }
+#endif
+            
+            if (!camera.TryGetCullingParameters(out ScriptableCullingParameters spCullingParams))
+            {
+                return;
+            }
+            // spCullingParams.shadowDistance = Mathf.Min()
+            CullingResults cullingResults = context.Cull(ref spCullingParams);
+
+            bufferSettings.m_AllowHDR &= camera.allowHDR;
+            Vector2Int bufferSize = default;
+            if (useScaleRendering)
+            {
+                renderScale = Mathf.Clamp(renderScale, m_RenderScaleMin, m_RenderScaleMax);
+                bufferSize.x = (int)(camera.pixelWidth * renderScale);
+                bufferSize.y = (int)(camera.pixelHeight * renderScale);
+            }
+            else
+            {
+                bufferSize.x = camera.pixelWidth;
+                bufferSize.y = camera.pixelHeight;
+            }
+            
+            // Record the render graph
+            var renderGraphParams = new RenderGraphParameters()
+            {
+                commandBuffer = CommandBufferPool.Get(),
+                currentFrameIndex = Time.frameCount,
+                executionName = cameraSampler.name,
+                rendererListCulling = true,
+                scriptableRenderContext = context
+            };
+            renderGraph.BeginRecording(renderGraphParams);
+
+            using (new RenderGraphProfilingScope(renderGraph, cameraSampler))
+            {
+                
+            }
+            renderGraph.EndRecordingAndExecute();
+            
+            context.ExecuteCommandBuffer(renderGraphParams.commandBuffer);
+            context.Submit();
+            
+            CommandBufferPool.Release(renderGraphParams.commandBuffer);
+        }
     }
 }
