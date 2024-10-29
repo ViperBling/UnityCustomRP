@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3389730990506195271}
   - component: {fileID: 1659535747625314330}
   - component: {fileID: 3731134350705568466}
-  - component: {fileID: 5073847944227309885}
   m_Layer: 0
   m_Name: Ground
   m_TagString: Untagged
@@ -60,6 +59,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -107,17 +109,3 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &5073847944227309885
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7350641433229532021}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f10d17ab0a7d49939cc2cadcab388872, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BaseColor: {r: 0.5471698, g: 0.5239409, b: 0.5239409, a: 1}
-  m_Cutoff: 0.5
