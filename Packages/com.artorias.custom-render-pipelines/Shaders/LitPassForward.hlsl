@@ -13,7 +13,7 @@ Varyings LitPassVertex(Attributes vsIn)
     vsOut.positionCS = TransformWorldToHClip(positionWS);
     vsOut.normalWS = TransformObjectToWorldNormal(vsIn.normalOS);
 
-    float4 baseMapST = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _BaseMap_ST);
+    float4 baseMapST = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _MainTex_ST);
     vsOut.texCoord = vsIn.texCoord * baseMapST.xy + baseMapST.zw;
 
     return vsOut;
@@ -23,7 +23,7 @@ float4 LitPassFragment(Varyings fsIn) : SV_TARGET
 {
     UNITY_SETUP_INSTANCE_ID(fsIn);
 
-    float4 baseMapVal = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, fsIn.texCoord);
+    float4 baseMapVal = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, fsIn.texCoord);
     float4 baseColor = UNITY_ACCESS_INSTANCED_PROP(UnityPerMaterial, _BaseColor);
     float4 base = baseMapVal * baseColor;
     #if defined(_CLIPPING)
@@ -38,5 +38,5 @@ float4 LitPassFragment(Varyings fsIn) : SV_TARGET
 
     float3 color = CalculateLighting(surfaceData);
     
-    return float4(color, surfaceData.alpha);
+    return float4(surfaceData.albedo, surfaceData.alpha);
 }

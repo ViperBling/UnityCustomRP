@@ -2,7 +2,7 @@
 {
     Properties
     {
-        _BaseMap("Texture", 2D) = "white" {}
+        _MainTex("Main Texture", 2D) = "white" {}
 		_BaseColor("Color", Color) = (0.5, 0.5, 0.5, 1.0)
 		_Cutoff ("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 		[Toggle(_CLIPPING)] _Clipping ("Alpha Clipping", Float) = 0
@@ -21,7 +21,7 @@
                 "LightMode" = "CustomRPLit"
             }
             
-            Blend [_SrcBlend] [_DstBlend]
+            Blend [_SrcBlend] [_DstBlend], One OneMinusSrcAlpha
 			ZWrite [_ZWrite]
 			
             HLSLPROGRAM

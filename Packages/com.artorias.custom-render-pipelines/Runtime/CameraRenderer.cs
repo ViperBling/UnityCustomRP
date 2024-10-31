@@ -102,12 +102,20 @@ namespace CustomRP
                     rg, isCopyColorTexture, isCopyDepthTexture,
                     bufferSettings.m_AllowHDR, bufferSize, camera);
                 
+                // Opaque
+                GeometryPass.Record(rg, camera, cullingResults, cameraSettings.m_RenderingLayerMask, true, renderTextures);
+                
                 SkyboxPass.Record(rg, camera, renderTextures);
 
                 var copier = new CameraRendererCopier(m_Material, camera, cameraSettings.m_FinalBlendMode);
                 CopyAttachmentsPass.Record(rg, isCopyColorTexture, isCopyDepthTexture, copier, renderTextures);
                 
+                // Transparent
+                GeometryPass.Record(rg, camera, cullingResults, cameraSettings.m_RenderingLayerMask, false, renderTextures);
+                
                 FinalPass.Record(rg, copier, renderTextures);
+                
+                GizmosPass.Record(rg, copier, renderTextures);
             }
             rg.EndRecordingAndExecute();
             
