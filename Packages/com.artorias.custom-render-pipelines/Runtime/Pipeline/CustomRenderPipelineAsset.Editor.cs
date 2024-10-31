@@ -1,4 +1,6 @@
-﻿namespace CustomRP
+﻿using System;
+
+namespace CustomRP
 {
     partial class CustomRenderPipelineAsset
     {
@@ -15,6 +17,7 @@
             }
         }
         
+        [Obsolete]
         public override string[] renderingLayerMaskNames => m_RenderingLayerNames;
         
 #endif
