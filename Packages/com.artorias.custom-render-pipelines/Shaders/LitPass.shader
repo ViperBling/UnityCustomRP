@@ -34,4 +34,6 @@
             ENDHLSL
         }
     }
+
+    CustomEditor "CustomRP.CustomShaderGUI"
 }
