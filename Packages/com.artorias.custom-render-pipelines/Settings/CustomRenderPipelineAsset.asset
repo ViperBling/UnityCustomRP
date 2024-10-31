@@ -13,24 +13,24 @@ MonoBehaviour:
   m_Name: CustomRenderPipelineAsset
   m_EditorClassIdentifier: 
   m_RPSettings:
-    m_CameraBuffer:
+    m_CameraBufferSettings:
       m_AllowHDR: 1
-      m_CopyColor: 0
-      m_CopyColorReflection: 0
-      m_CopyDepth: 0
-      m_CopyDepthReflection: 0
+      m_IsCopyColor: 1
+      m_IsCopyColorReflection: 0
+      m_IsCopyDepth: 1
+      m_IsCopyDepthReflection: 0
       m_RenderScale: 1
-      m_BicubicRescaling: 0
+      m_BicubicRescaling: 1
     m_UseSRPBatch: 1
     m_ColorLUTResolution: 32
     m_CameraRendererShader: {fileID: 4800000, guid: d27cdad93a634f5685fb2ce69227a11f, type: 3}
     m_CameraDebuggerShader: {fileID: 0}
-  m_CameraBuffer:
+  m_CameraBufferSettings:
     m_AllowHDR: 1
-    m_CopyColor: 0
-    m_CopyColorReflection: 0
-    m_CopyDepth: 0
-    m_CopyDepthReflection: 0
+    m_IsCopyColor: 0
+    m_IsCopyColorReflection: 0
+    m_IsCopyDepth: 0
+    m_IsCopyDepthReflection: 0
     m_RenderScale: 1
     m_BicubicRescaling: 0
   m_UseSRPBatch: 1

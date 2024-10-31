@@ -24,9 +24,9 @@ namespace CustomRP
             CameraDebugger.Cleanup();
         }
 
-        public void Render(RenderGraph renderGraph, ScriptableRenderContext context, Camera camera, CustomRenderPipelineSettings settings)
+        public void Render(RenderGraph rg, ScriptableRenderContext srpContext, Camera camera, CustomRenderPipelineSettings settings)
         {
-            CameraBufferSettings bufferSettings = settings.m_CameraBuffer;
+            CameraBufferSettings bufferSettings = settings.m_CameraBufferSettings;
             
             ProfilingSampler cameraSampler;
             CameraSettings cameraSettings;
@@ -42,16 +42,16 @@ namespace CustomRP
                 cameraSettings = m_DefaultCameraSettings;
             }
             
-            bool useColorTexture, useDepthTexture;
+            bool isCopyColorTexture, isCopyDepthTexture;
             if (camera.cameraType == CameraType.Reflection)
             {
-                useColorTexture = bufferSettings.m_CopyColorReflection;
-                useDepthTexture = bufferSettings.m_CopyDepthReflection;
+                isCopyColorTexture = bufferSettings.m_IsCopyColorReflection;
+                isCopyDepthTexture = bufferSettings.m_IsCopyDepthReflection;
             }
             else
             {
-                useColorTexture = bufferSettings.m_CopyColor && cameraSettings.m_CopyColor;
-                useDepthTexture = bufferSettings.m_CopyDepth && cameraSettings.m_CopyDepth;
+                isCopyColorTexture = bufferSettings.m_IsCopyColor && cameraSettings.m_IsCopyColor;
+                isCopyDepthTexture = bufferSettings.m_IsCopyDepth && cameraSettings.m_IsCopyDepth;
             }
             
             float renderScale = cameraSettings.GetRenderScale(bufferSettings.m_RenderScale);
@@ -70,7 +70,7 @@ namespace CustomRP
                 return;
             }
             // spCullingParams.shadowDistance = Mathf.Min()
-            CullingResults cullingResults = context.Cull(ref spCullingParams);
+            CullingResults cullingResults = srpContext.Cull(ref spCullingParams);
 
             bufferSettings.m_AllowHDR &= camera.allowHDR;
             Vector2Int bufferSize = default;
@@ -93,18 +93,26 @@ namespace CustomRP
                 currentFrameIndex = Time.frameCount,
                 executionName = cameraSampler.name,
                 rendererListCulling = true,
-                scriptableRenderContext = context
+                scriptableRenderContext = srpContext
             };
-            renderGraph.BeginRecording(renderGraphParams);
-
-            using (new RenderGraphProfilingScope(renderGraph, cameraSampler))
+            rg.BeginRecording(renderGraphParams);
+            using (new RenderGraphProfilingScope(rg, cameraSampler))
             {
+                CameraRendererTextures renderTextures = SetupPass.Record(
+                    rg, isCopyColorTexture, isCopyDepthTexture,
+                    bufferSettings.m_AllowHDR, bufferSize, camera);
                 
+                SkyboxPass.Record(rg, camera, renderTextures);
+
+                var copier = new CameraRendererCopier(m_Material, camera, cameraSettings.m_FinalBlendMode);
+                CopyAttachmentsPass.Record(rg, isCopyColorTexture, isCopyDepthTexture, copier, renderTextures);
+                
+                FinalPass.Record(rg, copier, renderTextures);
             }
-            renderGraph.EndRecordingAndExecute();
+            rg.EndRecordingAndExecute();
             
-            context.ExecuteCommandBuffer(renderGraphParams.commandBuffer);
-            context.Submit();
+            srpContext.ExecuteCommandBuffer(renderGraphParams.commandBuffer);
+            srpContext.Submit();
             
             CommandBufferPool.Release(renderGraphParams.commandBuffer);
         }

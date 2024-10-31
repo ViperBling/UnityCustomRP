@@ -4,10 +4,10 @@ using UnityEngine;
 namespace CustomRP
 {
     [Serializable]
-    public class CameraBufferSettings
+    public struct CameraBufferSettings
     {
         public bool m_AllowHDR;
-        public bool m_CopyColor, m_CopyColorReflection, m_CopyDepth, m_CopyDepthReflection;
+        public bool m_IsCopyColor, m_IsCopyColorReflection, m_IsCopyDepth, m_IsCopyDepthReflection;
         
         [Range(CameraRenderer.m_RenderScaleMin, CameraRenderer.m_RenderScaleMax)]
         public float m_RenderScale;

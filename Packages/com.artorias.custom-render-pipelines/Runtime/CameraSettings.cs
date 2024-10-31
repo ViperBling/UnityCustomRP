@@ -7,8 +7,12 @@ namespace CustomRP
     [Serializable]
     public class CameraSettings
     {
-        public bool m_CopyColor = true, m_CopyDepth = true;
-        public int m_RenderingLayerMask = -1;
+        public bool m_IsCopyColor = true, m_IsCopyDepth = true;
+        
+        [HideInInspector]
+        public int m_DeprecateRenderingLayerMask = -1;
+        public RenderingLayerMask m_RenderingLayerMask = -1;
+        
         public bool m_MaskLights = false;
         
         public enum RenderScaleMode { Inherit, Multiply, Override }

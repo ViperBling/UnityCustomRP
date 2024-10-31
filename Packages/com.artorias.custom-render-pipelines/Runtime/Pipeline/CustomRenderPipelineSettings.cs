@@ -5,7 +5,7 @@ namespace CustomRP
     [System.Serializable]
     public class CustomRenderPipelineSettings
     {
-        public CameraBufferSettings m_CameraBuffer = new()
+        public CameraBufferSettings m_CameraBufferSettings = new()
         {
             m_AllowHDR = true,
             m_RenderScale = 1f,
