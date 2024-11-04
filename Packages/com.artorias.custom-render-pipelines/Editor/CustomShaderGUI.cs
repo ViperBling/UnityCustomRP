@@ -21,6 +21,10 @@ namespace CustomRP
 
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
+            m_Editor = materialEditor;
+            m_Properties = properties;
+            m_Materials = materialEditor.targets;
+            
             base.OnGUI(materialEditor, properties);
         }
 

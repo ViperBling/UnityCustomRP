@@ -38,5 +38,5 @@ float4 LitPassFragment(Varyings fsIn) : SV_TARGET
 
     float3 color = CalculateLighting(surfaceData);
     
-    return float4(surfaceData.albedo, surfaceData.alpha);
+    return float4(color, surfaceData.alpha);
 }

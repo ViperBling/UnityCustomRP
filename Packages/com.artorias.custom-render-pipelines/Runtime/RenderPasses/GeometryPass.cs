@@ -26,8 +26,8 @@ namespace CustomRP
         }
 
         public static void Record(RenderGraph rg, Camera camera, 
-            CullingResults cullingResults, uint renderingLayerMask,
-            bool isOpaque, in CameraRendererTextures renderTextures)
+            CullingResults cullingResults, uint renderingLayerMask, bool isOpaque, 
+            in CameraRendererTextures renderTextures, in LightResources lightData)
         {
             ProfilingSampler curSampler = isOpaque ? m_OpaqueSampler : m_TransparentSampler;
 
@@ -63,6 +63,9 @@ namespace CustomRP
                     rgBuilder.ReadTexture(renderTextures.m_DepthCopyAttachment);
                 }
             }
+
+            rgBuilder.ReadBuffer(lightData.m_DirectLightDataBuffer);
+            rgBuilder.ReadBuffer(lightData.m_OtherLightDataBuffer);
             
             rgBuilder.SetRenderFunc<GeometryPass>(static (pass, rgContext) => pass.Render(rgContext));
         }

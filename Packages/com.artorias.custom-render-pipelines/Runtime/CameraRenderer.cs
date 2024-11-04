@@ -98,12 +98,14 @@ namespace CustomRP
             rg.BeginRecording(renderGraphParams);
             using (new RenderGraphProfilingScope(rg, cameraSampler))
             {
+                LightResources lightResources = LightingPass.Record(rg, cullingResults, bufferSize, cameraSettings.m_MaskLights ? cameraSettings.m_RenderingLayerMask : -1);
+                
                 CameraRendererTextures renderTextures = SetupPass.Record(
                     rg, isCopyColorTexture, isCopyDepthTexture,
                     bufferSettings.m_AllowHDR, bufferSize, camera);
                 
                 // Opaque
-                GeometryPass.Record(rg, camera, cullingResults, cameraSettings.m_RenderingLayerMask, true, renderTextures);
+                GeometryPass.Record(rg, camera, cullingResults, cameraSettings.m_RenderingLayerMask, true, renderTextures, lightResources);
                 
                 SkyboxPass.Record(rg, camera, renderTextures);
 
@@ -111,7 +113,7 @@ namespace CustomRP
                 CopyAttachmentsPass.Record(rg, isCopyColorTexture, isCopyDepthTexture, copier, renderTextures);
                 
                 // Transparent
-                GeometryPass.Record(rg, camera, cullingResults, cameraSettings.m_RenderingLayerMask, false, renderTextures);
+                GeometryPass.Record(rg, camera, cullingResults, cameraSettings.m_RenderingLayerMask, false, renderTextures, lightResources);
                 
                 FinalPass.Record(rg, copier, renderTextures);
                 

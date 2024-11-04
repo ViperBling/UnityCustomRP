@@ -12,7 +12,7 @@ float3 CalculateLighting(SurfaceData surfaceData)
     for (int i = 0; i < GetDirectionalLightCount(); i++)
     {
         Light light = GetDirectionalLight(i);
-        color += LightingLambert(light.color, light.direction, surfaceData.normal);
+        color += surfaceData.albedo * LightingLambert(light.color, light.direction, surfaceData.normal);
     }
     
     return color;
