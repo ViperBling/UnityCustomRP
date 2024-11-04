@@ -1,0 +1,20 @@
+{
+    "name": "CustomRP.Samples",
+    "rootNamespace": "",
+    "references": [
+        "GUID:e7e307e30c7c25842ab83269e215916e",
+        "GUID:49fda65889e3e3c4c900060c65a4f127",
+        "GUID:0acc523941302664db1f4e527237feb3",
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:df380645f10b7bc4b97d4f5eb6303d95"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
