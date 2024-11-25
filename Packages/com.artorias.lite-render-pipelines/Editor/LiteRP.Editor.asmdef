@@ -1,0 +1,23 @@
+{
+    "name": "LiteRP.Editor",
+    "rootNamespace": "LiteRP.Editor",
+    "references": [
+        "GUID:056e89f2b6807c84b97570082a50a135",
+        "GUID:3eae0364be2026648bf74846acb8a731",
+        "GUID:b75d3cd3037d383a8d1e2f9a26d73d8a",
+        "GUID:329b4ccd385744985bf3f83cfd77dfe7",
+        "GUID:a35efad8797223d499f8c68b1f545dbc",
+        "GUID:d60799ab2a985554ea1a39cd38695018"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

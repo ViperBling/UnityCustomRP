@@ -1,0 +1,21 @@
+﻿{
+    "name": "com.artorias.lite-render-pipelines",
+    "description": "Lite RP",
+    "version": "1.0.0",
+    "unity": "6000.3",
+    "displayName": "Lite RP",
+    "dependencies": {
+        "com.unity.render-pipelines.core": "17.0.3",
+        "com.unity.mathematics": "1.3.2",
+        "com.unity.burst": "1.8.18"
+    },
+    "keywords": [
+        "graphics",
+        "performance",
+        "rendering",
+        "mobile",
+        "render",
+        "pipeline"
+    ],
+    "hideInEditor": false
+}
