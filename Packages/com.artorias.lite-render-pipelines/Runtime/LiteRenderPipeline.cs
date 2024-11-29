@@ -50,8 +50,6 @@ namespace LiteRP
             
             // 为相机创建CommandBuffer
             CommandBuffer cmdBuffer = CommandBufferPool.Get(camera.name);
-            // 设置相机属性
-            context.SetupCameraProperties(camera);
             
             RecordAndExecuteRenderGraph(context, camera, cmdBuffer);
             
@@ -70,6 +68,7 @@ namespace LiteRP
 
         private void InitializeRenderGraph()
         {
+            RTHandles.Initialize(Screen.width, Screen.height);
             m_RenderGraph = new RenderGraph("LiteRPRenderGraph");
             m_LiteRGRecorder = new LiteRGRecorder();
             m_ContextContainer = new ContextContainer();
@@ -79,6 +78,7 @@ namespace LiteRP
         {
             m_ContextContainer?.Dispose();
             m_ContextContainer = null;
+            m_LiteRGRecorder?.Dispose();
             m_LiteRGRecorder = null;
             m_RenderGraph?.Cleanup();
             m_RenderGraph = null;

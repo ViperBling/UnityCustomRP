@@ -11,15 +11,12 @@ namespace LiteRP
         private static readonly ShaderTagId s_ShaderTagID = new ShaderTagId("SRPDefaultUnlit");
         internal class GeometryPassData
         {
-            internal TextureHandle backBufferHandle;
             internal RendererListHandle opaqueRendererListHandle;
             internal RendererListHandle transRendererListHandle;
         }
 
-        private void AddGeometryPass(RenderGraph rg, ContextContainer frameData)
+        private void AddGeometryPass(RenderGraph rg, CameraData cameraData)
         {
-            CameraData cameraData = frameData.Get<CameraData>();
-            
             using var rgBuilder = rg.AddRasterRenderPass<GeometryPassData>(s_GeometryPassSampler.name, out var passData, s_GeometryPassSampler);
             
             // 声明或引用资源
@@ -38,8 +35,7 @@ namespace LiteRP
             rgBuilder.UseRendererList(passData.transRendererListHandle);
             
             // 导入BackBuffer
-            passData.backBufferHandle = rg.ImportBackbuffer(BuiltinRenderTextureType.CurrentActive);
-            rgBuilder.SetRenderAttachment(passData.backBufferHandle, 0, AccessFlags.Write);
+            rgBuilder.SetRenderAttachment(m_BackBufferColorHandle, 0, AccessFlags.Write);
             
             // 设置全局渲染状态
             rgBuilder.AllowPassCulling(false);
@@ -50,7 +46,6 @@ namespace LiteRP
                 rgContext.cmd.DrawRendererList(passData.opaqueRendererListHandle);
                 rgContext.cmd.DrawRendererList(passData.transRendererListHandle);
             });
-            
         }
     }
 }
