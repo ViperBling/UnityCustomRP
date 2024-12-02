@@ -24,6 +24,10 @@ namespace LiteRP
             {
                 rgBuilder.SetRenderAttachment(m_BackBufferColorHandle, 0, AccessFlags.Write);
             }
+            if (m_BackBufferDepthHandle.IsValid())
+            {
+                rgBuilder.SetRenderAttachmentDepth(m_BackBufferDepthHandle, AccessFlags.Write);
+            }
             
             rgBuilder.SetRenderFunc<SkyboxPassData>((skyboxPassData, rgContext) =>
             {

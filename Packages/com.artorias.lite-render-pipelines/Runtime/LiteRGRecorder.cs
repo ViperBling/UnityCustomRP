@@ -8,8 +8,16 @@ namespace LiteRP
 {
     partial class LiteRGRecorder : IRenderGraphRecorder, IDisposable
     {
+        private static readonly ShaderTagId[] s_ShaderTagIDs = new ShaderTagId[]
+        {
+            new ShaderTagId("SRPDefaultUnlit"),
+        };
+        
         private TextureHandle m_BackBufferColorHandle = TextureHandle.nullHandle;
         private RTHandle m_BackBufferColorRTHandle = null;
+        
+        private TextureHandle m_BackBufferDepthHandle = TextureHandle.nullHandle;
+        private RTHandle m_BackBufferDepthRTHandle = null;
         
         public void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
@@ -18,48 +26,107 @@ namespace LiteRP
             AddSetupCameraPropsPass(renderGraph, camData);
             
             CameraClearFlags clearFlags = camData.m_Camera.clearFlags;
-            if (clearFlags != CameraClearFlags.Nothing)
+            if (!renderGraph.nativeRenderPassesEnabled && clearFlags != CameraClearFlags.Nothing)
             {
                 AddClearRTPass(renderGraph, camData);
             }
-
+            AddOpaqueObjectPass(renderGraph, camData);
             if (clearFlags == CameraClearFlags.Skybox && RenderSettings.skybox != null)
             {
                 AddSkyboxPass(renderGraph, camData);
             }
             
-            AddGeometryPass(renderGraph, camData);
+            AddTransparentObjectPass(renderGraph, camData);
+            
+#if UNITY_EDITOR
+            AddEditorGizmoPass(renderGraph, camData, GizmoSubset.PreImageEffects);
+            AddEditorGizmoPass(renderGraph, camData, GizmoSubset.PostImageEffects);
+#endif
         }
 
         private void CreateRenderGraphCameraRTs(RenderGraph renderGraph, CameraData camData)
         {
-            RenderTargetIdentifier targetColorID = BuiltinRenderTextureType.CameraTarget;
+            var cameraTargetTexture = camData.m_Camera.targetTexture;
+            bool isBuildInTexture = cameraTargetTexture == null;
+
+            bool isCameraOffscreenDepth = !isBuildInTexture && camData.m_Camera.targetTexture.format == RenderTextureFormat.Depth;
+
+            RenderTargetIdentifier targetColorID = isBuildInTexture ? BuiltinRenderTextureType.CameraTarget : new RenderTargetIdentifier(cameraTargetTexture);
             if (m_BackBufferColorRTHandle == null)
             {
                 m_BackBufferColorRTHandle = RTHandles.Alloc(targetColorID, "BackBuffer_Color");
             }
+            else if (m_BackBufferColorRTHandle.nameID != targetColorID)
+            {
+                RTHandleStaticHelpers.SetRTHandleUserManagedWrapper(ref m_BackBufferColorRTHandle, targetColorID);
+            }
             
-            Color cameraBackgroundColor = CoreUtils.ConvertSRGBToActiveColorSpace(camData.m_Camera.backgroundColor);
+            RenderTargetIdentifier targetDepthID = isBuildInTexture ? BuiltinRenderTextureType.Depth : new RenderTargetIdentifier(cameraTargetTexture);
+            if (m_BackBufferDepthRTHandle == null)
+            {
+                m_BackBufferDepthRTHandle = RTHandles.Alloc(targetDepthID, "BackBuffer_Depth");
+            }
+            else if (m_BackBufferDepthRTHandle.nameID != targetDepthID)
+            {
+                RTHandleStaticHelpers.SetRTHandleUserManagedWrapper(ref m_BackBufferDepthRTHandle, targetDepthID);
+            }
 
-            ImportResourceParams importBackBufferColorParams = new ImportResourceParams();
-            importBackBufferColorParams.clearOnFirstUse = true;
-            importBackBufferColorParams.clearColor = cameraBackgroundColor;
-            importBackBufferColorParams.discardOnLastUse = false;
+            Color clearColor = camData.GetClearColor();
+            RTClearFlags clearFlags = camData.GetClearFlags();
+
+            bool clearOnFirstUse = !renderGraph.nativeRenderPassesEnabled;
+            bool discardColorOnLastUse = !renderGraph.nativeRenderPassesEnabled;
+            bool discardDepthOnLastUse = !isCameraOffscreenDepth;
             
-            bool colorRTIsSRGB = (QualitySettings.activeColorSpace == ColorSpace.Linear);
+            ImportResourceParams importBackBufferColorParams = new ImportResourceParams();
+            importBackBufferColorParams.clearOnFirstUse = clearOnFirstUse;
+            importBackBufferColorParams.clearColor = clearColor;
+            importBackBufferColorParams.discardOnLastUse = discardColorOnLastUse;
+            
+            ImportResourceParams importBackBufferDepthParams = new ImportResourceParams();
+            importBackBufferColorParams.clearOnFirstUse = clearOnFirstUse;
+            importBackBufferColorParams.clearColor = clearColor;
+            importBackBufferColorParams.discardOnLastUse = discardDepthOnLastUse;
+            
+            #if UNITY_EDITOR
+            if (camData.m_Camera.cameraType == CameraType.SceneView)
+            {
+                importBackBufferDepthParams.discardOnLastUse = false;
+            }
+            #endif
+            
+            bool colorRT_sSRGB = (QualitySettings.activeColorSpace == ColorSpace.Linear);
             RenderTargetInfo importInfoColor = new RenderTargetInfo();
-            importInfoColor.width = Screen.width;
-            importInfoColor.height = Screen.height;
-            importInfoColor.volumeDepth = 1;
-            importInfoColor.msaaSamples = 1;
-            importInfoColor.format = GraphicsFormatUtility.GetGraphicsFormat(RenderTextureFormat.Default, colorRTIsSRGB);
+            RenderTargetInfo importInfoDepth = new RenderTargetInfo();
+
+            if (isBuildInTexture)
+            {
+                importInfoColor.width = Screen.width;
+                importInfoColor.height = Screen.height;
+                importInfoColor.volumeDepth = 1;
+                importInfoColor.msaaSamples = 1;
+            }
+            else
+            {
+                importInfoColor.width = cameraTargetTexture.width;
+                importInfoColor.height = cameraTargetTexture.height;
+                importInfoColor.volumeDepth = cameraTargetTexture.volumeDepth;
+                importInfoColor.msaaSamples = cameraTargetTexture.antiAliasing;
+            }
+            importInfoColor.bindMS = false;
+            importInfoColor.format = GraphicsFormatUtility.GetGraphicsFormat(RenderTextureFormat.Default, colorRT_sSRGB);
+            
+            importInfoDepth = importInfoColor;
+            importInfoDepth.format = SystemInfo.GetGraphicsFormat(DefaultFormat.DepthStencil);
 
             m_BackBufferColorHandle = renderGraph.ImportTexture(m_BackBufferColorRTHandle, importInfoColor, importBackBufferColorParams);
+            m_BackBufferDepthHandle = renderGraph.ImportTexture(m_BackBufferDepthRTHandle, importInfoDepth, importBackBufferDepthParams);
         }
         
         public void Dispose()
         {
             RTHandles.Release(m_BackBufferColorRTHandle);
+            RTHandles.Release(m_BackBufferDepthRTHandle);
             GC.SuppressFinalize(this);
         }
     }
