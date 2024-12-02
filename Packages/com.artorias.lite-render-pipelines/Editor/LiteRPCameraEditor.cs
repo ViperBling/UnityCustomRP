@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 // 修复Camera.GetCommandBuffer Warning
-namespace LiteRP
+namespace LiteRP.Editor
 {
     [CanEditMultipleObjects]
     [CustomEditor(typeof(Camera))]
