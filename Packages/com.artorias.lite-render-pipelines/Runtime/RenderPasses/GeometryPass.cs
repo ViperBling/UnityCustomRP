@@ -35,7 +35,10 @@ namespace LiteRP
             rgBuilder.UseRendererList(passData.transRendererListHandle);
             
             // 导入BackBuffer
-            rgBuilder.SetRenderAttachment(m_BackBufferColorHandle, 0, AccessFlags.Write);
+            if (m_BackBufferColorHandle.IsValid())
+            {
+                rgBuilder.SetRenderAttachment(m_BackBufferColorHandle, 0, AccessFlags.Write);
+            }
             
             // 设置全局渲染状态
             rgBuilder.AllowPassCulling(false);

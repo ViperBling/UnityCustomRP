@@ -7,7 +7,7 @@ namespace LiteRP
 {
     public partial class LiteRGRecorder
     {
-        private static readonly ProfilingSampler s_SetupCameraPropsSampler = new ProfilingSampler("LiteRP.SetupCameraProps");
+        private static readonly ProfilingSampler s_SetupCameraPropsPassSampler = new ProfilingSampler("LiteRP.SetupCameraProps");
         
         internal class SetupCameraPropsData
         {
@@ -16,7 +16,7 @@ namespace LiteRP
 
         private void AddSetupCameraPropsPass(RenderGraph rg, CameraData cameraData)
         {
-            using var rgBuilder = rg.AddRasterRenderPass<SetupCameraPropsData>(s_SetupCameraPropsSampler.name, out var passData, s_SetupCameraPropsSampler);
+            using var rgBuilder = rg.AddRasterRenderPass<SetupCameraPropsData>(s_SetupCameraPropsPassSampler.name, out var passData, s_SetupCameraPropsPassSampler);
             
             passData.cameraData = cameraData;
             
