@@ -31,6 +31,18 @@ float4x4 OptimizeProjectionMatrix(float4x4 M)
     return M;
 }
 
+// Block Layout should be respected due to SRP Batcher
+CBUFFER_START(UnityPerDraw)
+    float4x4 unity_ObjectToWorld;
+    float4x4 unity_WorldToObject;
+
+    real4 unity_WorldTransformParams; // w is usually 1.0, or -1.0 for odd-negative scale transforms
+
+    // Velocity
+    float4x4 unity_MatrixPreviousM;
+    float4x4 unity_MatrixPreviousMI;
+CBUFFER_END
+
 #define UNITY_MATRIX_M     unity_ObjectToWorld
 #define UNITY_MATRIX_I_M   unity_WorldToObject
 #define UNITY_MATRIX_V     unity_MatrixV
