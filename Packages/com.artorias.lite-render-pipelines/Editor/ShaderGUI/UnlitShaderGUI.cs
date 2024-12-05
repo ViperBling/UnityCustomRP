@@ -55,7 +55,7 @@ namespace LiteRP.Editor
         {
             base.DrawSurfaceInputs(material);
             
-            LiteRPShaderGUIUtilities.DrawEmissionProperties(m_MaterialEditor, m_EmissionColorProperty, m_EmissionColorProperty, true);
+            LiteRPShaderGUIUtilities.DrawEmissionProperties(m_MaterialEditor, m_EmissionMapProperty, m_EmissionColorProperty, true);
             LiteRPShaderGUIUtilities.DrawTileOffset(m_MaterialEditor, m_BaseMapProperty);
         }
     }

@@ -88,7 +88,7 @@ namespace LiteRP.Editor
     {
         internal static event Action<Material> ShadowCasterPassEnabledChanged;
 
-        internal static bool IsShaderGraph = false;
+        internal static bool b_IsShaderGraph = false;
         
         public static void SetMaterialKeywords(Material material, Action<Material> shadingModelFunc = null, Action<Material> shaderFunc = null)
         {
@@ -131,7 +131,7 @@ namespace LiteRP.Editor
         {
             // If a Shader Graph material doesn't yet have the queue control property,
             // we should not engage automatic behavior until the shader gets reimported.
-            bool automaticQueueControl = !IsShaderGraph;
+            bool automaticQueueControl = !b_IsShaderGraph;
             if (material.HasProperty(LiteRPShaderProperty.QueueControl))
             {
                 var queueControl = material.GetFloat(LiteRPShaderProperty.QueueControl);
@@ -192,6 +192,7 @@ namespace LiteRP.Editor
                     var dstBlendAlpha = BlendMode.OneMinusSrcAlpha;
                     
                     // 半透设置
+                    // ref: https://docs.unity3d.com/Manual/SL-Blend.html
                     switch (blendMode)
                     {
                         // srcRGB * srcAlpha + dstRGB * (1 - srcAlpha)
@@ -300,7 +301,7 @@ namespace LiteRP.Editor
             }
             else
             {
-                if (IsShaderGraph)
+                if (b_IsShaderGraph)
                 {
                     castShadows = true;
                 }
@@ -338,7 +339,7 @@ namespace LiteRP.Editor
             //
             // bool isShaderGraph = false; // Non-shadergraph materials use automatic behavior
             int rawRenderQueue = MaterialAccess.ReadMaterialRawRenderQueue(material);
-            if (!IsShaderGraph || rawRenderQueue == -1)
+            if (!b_IsShaderGraph || rawRenderQueue == -1)
             {
                 material.SetFloat(LiteRPShaderProperty.QueueControl, (float)LiteRPQueueControl.Auto);
             }
@@ -351,31 +352,47 @@ namespace LiteRP.Editor
         internal static void SetMaterialSrcDstBlendProps(Material material, BlendMode srcBlend, BlendMode dstBlend)
         {
             if (material.HasProperty(LiteRPShaderProperty.SrcBlend))
+            {
                 material.SetFloat(LiteRPShaderProperty.SrcBlend, (float)srcBlend);
+            }
 
             if (material.HasProperty(LiteRPShaderProperty.DstBlend))
+            {
                 material.SetFloat(LiteRPShaderProperty.DstBlend, (float)dstBlend);
+            }
 
             if (material.HasProperty(LiteRPShaderProperty.SrcBlendAlpha))
+            {
                 material.SetFloat(LiteRPShaderProperty.SrcBlendAlpha, (float)srcBlend);
+            }
 
             if (material.HasProperty(LiteRPShaderProperty.DstBlendAlpha))
+            {
                 material.SetFloat(LiteRPShaderProperty.DstBlendAlpha, (float)dstBlend);
+            }
         }
 
         internal static void SetMaterialSrcDstBlendProps(Material material, BlendMode srcBlendColor, BlendMode dstBlendColor, BlendMode srcBlendAlpha, BlendMode dstBlendAlpha)
         {
             if (material.HasProperty(LiteRPShaderProperty.SrcBlend))
+            {
                 material.SetFloat(LiteRPShaderProperty.SrcBlend, (float)srcBlendColor);
+            }
 
             if (material.HasProperty(LiteRPShaderProperty.DstBlend))
+            {
                 material.SetFloat(LiteRPShaderProperty.DstBlend, (float)dstBlendColor);
+            }
 
             if (material.HasProperty(LiteRPShaderProperty.SrcBlendAlpha))
+            {
                 material.SetFloat(LiteRPShaderProperty.SrcBlendAlpha, (float)srcBlendAlpha);
+            }
 
             if (material.HasProperty(LiteRPShaderProperty.DstBlendAlpha))
+            {
                 material.SetFloat(LiteRPShaderProperty.DstBlendAlpha, (float)dstBlendAlpha);
+            }
         }
 
         internal static void SetMaterialZWriteProperty(Material material, bool zWriteEnabled)

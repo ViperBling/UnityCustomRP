@@ -7,6 +7,8 @@ struct FAttributes
 {
     float4 positionOS : POSITION;
     float2 texCoord : TEXCOORD0;
+
+    UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
 struct FVaryings
@@ -14,6 +16,8 @@ struct FVaryings
     float4 positionCS : SV_POSITION;
     float2 texCoord : TEXCOORD0;
     float fogCoord : TEXCOORD1;
+
+    UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
 FVaryings UnlitPassVertex(FAttributes input)

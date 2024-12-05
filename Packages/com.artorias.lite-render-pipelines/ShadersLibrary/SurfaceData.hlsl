@@ -16,11 +16,11 @@ struct FSurfaceData
 
 half Alpha(half albedoAlpha, half4 color, half cutoff)
 {
-    #if !defined(_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A) && !defined(_GLOSSINESS_FROM_BASE_ALPHA)
+#if !defined(_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A) && !defined(_GLOSSINESS_FROM_BASE_ALPHA)
     half alpha = albedoAlpha * color.a;
-    #else
+#else
     half alpha = color.a;
-    #endif
+#endif
 
     alpha = AlphaDiscard(alpha, cutoff);
 

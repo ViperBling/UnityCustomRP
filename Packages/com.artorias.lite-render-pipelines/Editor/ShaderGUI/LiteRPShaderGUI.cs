@@ -162,15 +162,15 @@ namespace LiteRP.Editor
 
             if (filter.HasFlag(Expandable.SurfaceOptions))
             {
-                m_MaterialScopeList.RegisterHeaderScope(LiteRPStyles.SurfaceOptions, Expandable.SurfaceOptions, DrawSurfaceOptions);
+                m_MaterialScopeList.RegisterHeaderScope(LiteRPStyles.surfaceOptions, Expandable.SurfaceOptions, DrawSurfaceOptions);
             }
             if (filter.HasFlag(Expandable.SurfaceInputs))
             {
-                m_MaterialScopeList.RegisterHeaderScope(LiteRPStyles.SurfaceInputs, Expandable.SurfaceInputs, DrawSurfaceInputs);
+                m_MaterialScopeList.RegisterHeaderScope(LiteRPStyles.surfaceInputs, Expandable.SurfaceInputs, DrawSurfaceInputs);
             }
             if (filter.HasFlag(Expandable.Advanced))
             {
-                m_MaterialScopeList.RegisterHeaderScope(LiteRPStyles.AdvancedLabel, Expandable.Advanced, DrawAdvancedOptions);
+                m_MaterialScopeList.RegisterHeaderScope(LiteRPStyles.advancedLabel, Expandable.Advanced, DrawAdvancedOptions);
             }
             if (filter.HasFlag(Expandable.Details))
             {
@@ -181,18 +181,78 @@ namespace LiteRP.Editor
         // 绘制Surface options GUI
         public virtual void DrawSurfaceOptions(Material material)
         {
+            if (m_SurfaceTypeProperty != null)
+            {
+                m_MaterialEditor.PopupShaderProperty(m_SurfaceTypeProperty, LiteRPStyles.surfaceType, LiteRPStyles.surfaceTypeNames);
+            }
+
+            if (m_SurfaceTypeProperty != null && (SurfaceType)m_SurfaceTypeProperty.floatValue == SurfaceType.Transparent)
+            {
+                m_MaterialEditor.PopupShaderProperty(m_BlendModeProperty, LiteRPStyles.blendingMode, LiteRPStyles.blendModeNames);
+                if (material.HasProperty(LiteRPShaderProperty.BlendModePreserveSpecular))
+                {
+                    BlendMode blendMode = (BlendMode)material.GetFloat(LiteRPShaderProperty.BlendMode);
+                    bool isDisabled = blendMode == BlendMode.Multiply || blendMode == BlendMode.Premultiply;
+                    if (!isDisabled)
+                    {
+                        LiteRPShaderGUIUtilities.DrawFloatToggleProperty(LiteRPStyles.preserveSpecularText, m_PreserveSpecProperty, 1, isDisabled);
+                    }
+                }
+            }
+
+            if (m_CullingProperty != null)
+            {
+                m_MaterialEditor.PopupShaderProperty(m_CullingProperty, LiteRPStyles.cullingText, LiteRPStyles.renderFaceNames);
+            }
+
+            if (m_ZWriteProperty != null)
+            {
+                m_MaterialEditor.PopupShaderProperty(m_ZWriteProperty, LiteRPStyles.zWriteText, LiteRPStyles.zWriteNames);
+            }
+            if (m_ZTestProperty != null)
+            {
+                m_MaterialEditor.IntPopupShaderProperty(m_ZTestProperty, LiteRPStyles.zTestText.text, LiteRPStyles.zTestNames, LiteRPStyles.zTestValues);
+            }
+
+            LiteRPShaderGUIUtilities.DrawFloatToggleProperty(LiteRPStyles.alphaClipText, m_AlphaClipProperty);
+
+            if (m_AlphaClipProperty != null && m_AlphaCutoffProperty != null && (int)m_AlphaClipProperty.floatValue == 1)
+            {
+                m_MaterialEditor.ShaderProperty(m_AlphaCutoffProperty, LiteRPStyles.alphaClipThresholdText, 1);
+            }
             
+            LiteRPShaderGUIUtilities.DrawFloatToggleProperty(LiteRPStyles.castShadowText, m_CastShadowsProperty);
+            LiteRPShaderGUIUtilities.DrawFloatToggleProperty(LiteRPStyles.receiveShadowText, m_ReceiveShadowsProperty);
         }
         
         // 绘制Surface inputs GUI
         public virtual void DrawSurfaceInputs(Material material)
         {
-            
+            LiteRPShaderGUIUtilities.DrawBaseProperties(m_MaterialEditor, m_BaseMapProperty, m_BaseColorProperty);
         }
 
         public virtual void DrawAdvancedOptions(Material material)
         {
+            bool autoQueueControl = LiteRPShaderUtilities.GetAutomaticQueueControlSetting(material);
+            if (autoQueueControl)
+            {
+                if (m_QueueOffsetProperty != null)
+                    m_MaterialEditor.IntSliderShaderProperty(m_QueueOffsetProperty, -m_QueueOffsetRange, m_QueueOffsetRange, LiteRPStyles.queueSlider);
+            }
             
+            m_MaterialEditor.EnableInstancingField();
+        }
+        
+        public override void AssignNewShaderToMaterial(Material material, Shader oldShader, Shader newShader)
+        {
+            // // Clear all keywords for fresh start
+            // // Note: this will nuke user-selected custom keywords when they change shaders
+            // material.shaderKeywords = null;
+            //
+            // base.AssignNewShaderToMaterial(material, oldShader, newShader);
+            //
+            // // Setup keywords based on the new shader
+            // UpdateMaterial(material, ShaderUtils.MaterialUpdateType.ChangedAssignedShader);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace LiteRP.Editor
             /// <summary>
             /// The names for options available in the BlendMode enum.
             /// </summary>
-            public static readonly string[] blendModeNames = Enum.GetNames(typeof(BlendMode));
+            public static readonly string[] blendModeNames = Enum.GetNames(typeof(LiteRPBlendMode));
 
             /// <summary>
             /// The names for options available in the RenderFace enum.
@@ -36,7 +36,7 @@ namespace LiteRP.Editor
             /// <summary>
             /// The names for options available in the ZWriteControl enum.
             /// </summary>
-            public static readonly string[] zwriteNames = Enum.GetNames(typeof(LiteRPZWriteControl));
+            public static readonly string[] zWriteNames = Enum.GetNames(typeof(LiteRPZWriteControl));
 
             /// <summary>
             /// The names for options available in the QueueControl enum.
@@ -47,30 +47,30 @@ namespace LiteRP.Editor
             /// The values for options available in the ZTestMode enum.
             /// </summary>
             // Skipping the first entry for ztest (ZTestMode.Disabled is not a valid value)
-            public static readonly int[] ztestValues = ((int[])Enum.GetValues(typeof(LiteRPZTestMode))).Skip(1).ToArray();
+            public static readonly int[] zTestValues = ((int[])Enum.GetValues(typeof(LiteRPZTestMode))).Skip(1).ToArray();
 
             /// <summary>
             /// The names for options available in the ZTestMode enum.
             /// </summary>
             // Skipping the first entry for ztest (ZTestMode.Disabled is not a valid value)
-            public static readonly string[] ztestNames = Enum.GetNames(typeof(LiteRPZTestMode)).Skip(1).ToArray();
+            public static readonly string[] zTestNames = Enum.GetNames(typeof(LiteRPZTestMode)).Skip(1).ToArray();
 
             // Categories
             /// <summary>
             /// The text and tooltip for the surface options GUI.
             /// </summary>
-            public static readonly GUIContent SurfaceOptions = EditorGUIUtility.TrTextContent("Surface Options", "Controls how URP Renders the material on screen.");
+            public static readonly GUIContent surfaceOptions = EditorGUIUtility.TrTextContent("Surface Options", "Controls how URP Renders the material on screen.");
 
             /// <summary>
             /// The text and tooltip for the surface inputs GUI.
             /// </summary>
-            public static readonly GUIContent SurfaceInputs = EditorGUIUtility.TrTextContent("Surface Inputs",
+            public static readonly GUIContent surfaceInputs = EditorGUIUtility.TrTextContent("Surface Inputs",
                 "These settings describe the look and feel of the surface itself.");
 
             /// <summary>
             /// The text and tooltip for the advanced options GUI.
             /// </summary>
-            public static readonly GUIContent AdvancedLabel = EditorGUIUtility.TrTextContent("Advanced Options",
+            public static readonly GUIContent advancedLabel = EditorGUIUtility.TrTextContent("Advanced Options",
                 "These settings affect behind-the-scenes rendering and underlying calculations.");
 
             /// <summary>
@@ -100,13 +100,13 @@ namespace LiteRP.Editor
             /// <summary>
             /// The text and tooltip for the depth write GUI.
             /// </summary>
-            public static readonly GUIContent zwriteText = EditorGUIUtility.TrTextContent("Depth Write",
+            public static readonly GUIContent zWriteText = EditorGUIUtility.TrTextContent("Depth Write",
                 "Controls whether the shader writes depth.  Auto will write only when the shader is opaque.");
 
             /// <summary>
             /// The text and tooltip for the depth test GUI.
             /// </summary>
-            public static readonly GUIContent ztestText = EditorGUIUtility.TrTextContent("Depth Test",
+            public static readonly GUIContent zTestText = EditorGUIUtility.TrTextContent("Depth Test",
                 "Specifies the depth test mode.  The default is LEqual.");
 
             /// <summary>
@@ -258,6 +258,24 @@ namespace LiteRP.Editor
             {
                 materialEditor.TextureScaleOffsetProperty(textureProperty);
             }
+        }
+
+        internal static void DrawFloatToggleProperty(GUIContent styles, MaterialProperty matProp, int indentLevel = 0, bool isDisabled = false)
+        {
+            if (matProp == null) return;
+            
+            EditorGUI.BeginDisabledGroup(isDisabled);
+            EditorGUI.indentLevel = indentLevel;
+            EditorGUI.BeginChangeCheck();
+            MaterialEditor.BeginProperty(matProp);
+            bool newValue = EditorGUILayout.Toggle(styles, (int)matProp.floatValue == 1);
+            if (EditorGUI.EndChangeCheck())
+            {
+                matProp.floatValue = newValue ? 1 : 0;
+            }
+            MaterialEditor.EndProperty();
+            EditorGUI.indentLevel -= indentLevel;
+            EditorGUI.EndDisabledGroup();
         }
     }
 }
