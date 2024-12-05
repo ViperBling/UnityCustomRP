@@ -8,9 +8,6 @@ CBUFFER_START(UnityPerMaterial)
     #if defined(CUSTOM_UNITY_PER_MATERIAL)
         CUSTOM_UNITY_PER_MATERIAL
     #endif
-
-    int _ReceiveNoShadow;
-    int _AlphaBlend_On;
 CBUFFER_END
 
 #ifdef UNITY_DOTS_INSTANCING_ENABLED
