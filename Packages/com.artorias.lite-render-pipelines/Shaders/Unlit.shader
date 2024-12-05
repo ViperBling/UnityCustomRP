@@ -31,7 +31,7 @@
         Tags
         {
             "RenderType"="Opaque"
-            "RenderPipeline" = "LiteRP"
+            "RenderPipeline" = "LiteRenderPipeline"
         }
         LOD 100
         
