@@ -8,20 +8,33 @@ namespace LiteRP
 {
     public class LiteRenderPipeline : RenderPipeline
     {
-        private readonly static ShaderTagId s_UnlitShaderTagId = new ShaderTagId("SRPDefaultUnlit");
+        private LiteRPAsset m_RPAsset = null;
         private RenderGraph m_RenderGraph = null;
         private LiteRGRecorder m_LiteRGRecorder = null;
         private ContextContainer m_ContextContainer = null;
-
-        public LiteRenderPipeline()
+        
+        public static LiteRPAsset RPAsset
         {
-            InitializeRenderGraph();
+            get => GraphicsSettings.currentRenderPipeline as LiteRPAsset;
         }
 
+        public LiteRenderPipeline(LiteRPAsset rpAsset)
+        {
+            m_RPAsset = rpAsset;
+            InitializeRPSettings();
+            InitializeRenderGraph();
+        }
+        
         protected override void Dispose(bool bDispose)
         {
             CleanupRenderGraph();
             base.Dispose(bDispose);
+        }
+        
+        private void InitializeRPSettings()
+        {
+            GraphicsSettings.useScriptableRenderPipelineBatching = m_RPAsset.UseSRPBatcher;
+            QualitySettings.antiAliasing = m_RPAsset.AntiAliasing;
         }
 
         // Older version
