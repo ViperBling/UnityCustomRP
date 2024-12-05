@@ -53,9 +53,9 @@ namespace LiteRP.Editor
         }
         public enum RenderFace
         {
-            Front = 2,
-            Back = 1,
-            Both = 0
+            Both = 0,
+            Front = 1,
+            Back = 2
         }
         public enum QueueControl
         {

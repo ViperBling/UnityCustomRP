@@ -96,20 +96,25 @@ namespace LiteRP.Editor
 
             // Setup double sided GI based on Cull state
             if (material.HasProperty(LiteRPShaderProperty.CullMode))
+            {
                 material.doubleSidedGI = (LiteRPRenderFace)material.GetFloat(LiteRPShaderProperty.CullMode) != LiteRPRenderFace.Front;
+            }
 
             // Emission
             if (material.HasProperty(LiteRPShaderProperty.EmissionColor))
+            {
                 MaterialEditor.FixupEmissiveFlag(material);
+            }
 
-            bool shouldEmissionBeEnabled =
-                (material.globalIlluminationFlags & MaterialGlobalIlluminationFlags.EmissiveIsBlack) == 0;
+            bool shouldEmissionBeEnabled = (material.globalIlluminationFlags & MaterialGlobalIlluminationFlags.EmissiveIsBlack) == 0;
 
             CoreUtils.SetKeyword(material, ShaderKeywordStrings.Emission, shouldEmissionBeEnabled);
 
             // Normal Map
             if (material.HasProperty(LiteRPShaderProperty.NormalMap))
+            {
                 CoreUtils.SetKeyword(material, ShaderKeywordStrings.NormalMap, material.GetTexture(LiteRPShaderProperty.NormalMap));
+            }
             
             // Shader specific keyword functions
             shadingModelFunc?.Invoke(material);
