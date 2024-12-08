@@ -1,17 +1,22 @@
 ﻿using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace LiteRP
+namespace LiteRP.FrameData
 {
     public class CameraData : ContextItem
     {
         public Camera m_Camera;
         public CullingResults m_CullingResults;
+        
+        public float m_MaxShadowDistance;
+        public bool m_PostProcessEnabled;
 
         public override void Reset()
         {
             m_Camera = null;
             m_CullingResults = default;
+            m_MaxShadowDistance = 0.0f;
+            m_PostProcessEnabled = false;
         }
 
         public RTClearFlags GetClearFlags()

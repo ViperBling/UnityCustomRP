@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 
+using LiteRP.FrameData;
+
 namespace LiteRP
 {
     public class LiteRenderPipeline : RenderPipeline

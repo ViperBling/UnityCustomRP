@@ -4,6 +4,8 @@ using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 
+using LiteRP.FrameData;
+
 namespace LiteRP
 {
     partial class LiteRGRecorder : IRenderGraphRecorder, IDisposable

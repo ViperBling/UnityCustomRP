@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace LiteRP
+namespace LiteRP.FrameData
 {
     public class ShadowData : ContextItem
     {
@@ -19,62 +19,79 @@ namespace LiteRP
         /// <summary>
         /// 主光源阴影贴图宽度
         /// </summary>
-        public int mainLightShadowmapWidth;
+        public int m_MainLightShadowmapWidth;
         
         /// <summary>
         /// 主光源阴影贴图高度
         /// </summary>
-        public int mainLightShadowmapHeight;
+        public int m_MainLightShadowmapHeight;
 
         /// <summary>
         /// 主光源阴影距离
         /// </summary>
-        public float mainLightShadowDistance;
+        public float m_MainLightShadowDistance;
         
         /// <summary>
         /// 级联阴影级数
         /// </summary>
-        public int mainLightShadowCascadesCount;
+        public int m_MainLightShadowCascadesCount;
         
         /// <summary>
         /// 级联阴影划分
         /// </summary>
-        public Vector3 mainLightShadowCascadesSplit;
+        public Vector3 m_MainLightShadowCascadesSplit;
 
         /// <summary>
         /// 级联阴影分级过渡
         /// </summary>
-        public float mainLightShadowCascadeBorder;
+        public float m_MainLightShadowCascadeBorder;
 
         /// <summary>
         /// 软阴影
         /// </summary>
-        public bool supportSoftShadows;
+        public bool m_SupportSoftShadows;
         
         /// <summary>
         /// shadow map位数
         /// </summary>
-        public int shadowmapDepthBits;
+        public int m_ShadowmapDepthBits;
 
         /// <summary>
         /// 阴影Bias
         /// </summary>
-        public Vector4 mainLightShadowBias;
+        public Vector4 m_MainLightShadowBias;
         
         /// <summary>
         /// shadowmap 分辨率
         /// </summary>
-        public int mainLightShadowResolution;
+        public int m_MainLightShadowResolution;
 
-        internal int mainLightTileShadowResolution;
-        internal int mainLightRenderTargetWidth;
-        internal int mainLightRenderTargetHeight;
+        internal int m_MainLightTileShadowResolution;
+        internal int m_MainLightRenderTargetWidth;
+        internal int m_MainLightRenderTargetHeight;
         
-        // internal NativeArray<LightShadowCasterCullingInfo>
+        internal NativeArray<LightShadowCullingInfos> m_VisibleLightsShadowCullingInfos;
         
         public override void Reset()
         {
-            throw new System.NotImplementedException();
+            m_MainLightShadowEnable = false;
+            m_SupportMainLightShadow = false;
+            m_MainLightShadowmapWidth = 0;
+            m_MainLightShadowmapHeight = 0;
+            m_MainLightShadowDistance = 0;
+            m_MainLightShadowCascadesCount = 0;
+            m_MainLightShadowCascadesSplit = Vector3.zero;
+            m_MainLightShadowCascadeBorder = 0;
+            m_SupportSoftShadows = false;
+            m_ShadowmapDepthBits = 0;
+            m_MainLightShadowBias = Vector4.zero;
+            m_MainLightShadowResolution = 0;
+            
+            m_MainLightTileShadowResolution = 0;
+            m_MainLightRenderTargetWidth = 0;
+            m_MainLightRenderTargetHeight = 0;
+            
+            m_VisibleLightsShadowCullingInfos.Dispose();
         }
     }
 }
