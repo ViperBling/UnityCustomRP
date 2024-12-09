@@ -98,5 +98,5 @@ half4 UnlitPassFragment(FVaryings input) : SV_Target
     color.rgb = MixFog(color.rgb, fogFactor);
     color.a = OutputAlpha(color.a, IsSurfaceTypeTransparent(_Surface));
     
-    return shadow;
+    return color;
 }

@@ -199,4 +199,7 @@ float4x4 OptimizeProjectionMatrix(float4x4 M)
 #define UNITY_PREV_MATRIX_M   unity_MatrixPreviousM
 #define UNITY_PREV_MATRIX_I_M unity_MatrixPreviousMI
 
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
+#include "DOTSInstancing.hlsl"
+
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"

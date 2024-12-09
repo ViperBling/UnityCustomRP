@@ -37,5 +37,10 @@ namespace LiteRP.FrameData
         {
             return CoreUtils.ConvertSRGBToActiveColorSpace(m_Camera.backgroundColor);
         }
+
+        public float GetCameraAspectRatio()
+        {
+            return m_Camera.aspect;
+        }
     }
 }

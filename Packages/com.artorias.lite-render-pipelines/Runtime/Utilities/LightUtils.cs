@@ -141,8 +141,7 @@ namespace LiteRP
 
             // When no lights are visible, main light will be set to -1.
             // In this case we initialize it to default values and return
-            if (lightIndex < 0)
-                return;
+            if (lightIndex < 0) return;
 
             // Avoid memcpys. Pass by ref and locals for multiple uses.
             ref VisibleLight lightData = ref lights.UnsafeElementAtMutable(lightIndex);

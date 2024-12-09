@@ -34,6 +34,7 @@ namespace LiteRP
             
             AddSetupLightsPass(renderGraph, camData, lightData);
             CreateRenderGraphCameraRTs(renderGraph, camData);
+            AddInitRenderGraphFramePass(renderGraph);
             AddSetupCameraPropsPass(renderGraph, camData);
             
             if (NeedMainLightShadowPass(camData, lightData, shadowData))
@@ -105,12 +106,12 @@ namespace LiteRP
             importBackBufferColorParams.clearColor = clearColor;
             importBackBufferColorParams.discardOnLastUse = discardDepthOnLastUse;
             
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             if (camData.m_Camera.cameraType == CameraType.SceneView)
             {
                 importBackBufferDepthParams.discardOnLastUse = false;
             }
-            #endif
+#endif
             
             bool colorRT_sSRGB = (QualitySettings.activeColorSpace == ColorSpace.Linear);
             RenderTargetInfo importInfoColor = new RenderTargetInfo();
