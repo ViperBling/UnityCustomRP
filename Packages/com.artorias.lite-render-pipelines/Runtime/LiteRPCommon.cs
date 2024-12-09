@@ -1,45 +1,138 @@
 ﻿using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace LiteRP
 {
-    public static class ShaderKeywordStrings
+    /// <summary>
+    /// Options for setting MSAA Quality.
+    /// This defines how many samples URP computes per pixel for evaluating the effect.
+    /// </summary>
+    public enum MsaaQuality
     {
-        //Global Keyword String
-        public const string MainLightShadows = "_MAIN_LIGHT_SHADOWS";                   //非Cascade阴影
-        public const string MainLightShadowCascades = "_MAIN_LIGHT_SHADOWS_CASCADE";    //Cascade阴影
-        
-        public const string SoftShadows = "_SHADOWS_SOFT";                              //使用软阴影
-        public const string SoftShadowsLow = "_SHADOWS_SOFT_LOW";                       //使用软阴影-低质量
-        public const string SoftShadowsMedium = "_SHADOWS_SOFT_MEDIUM";                 //使用软阴影-中质量
-        public const string SoftShadowsHigh = "_SHADOWS_SOFT_HIGH";                     //使用软阴影-高质量
+        /// <summary>
+        /// Disables MSAA.
+        /// </summary>
+        Disabled = 1,
 
-        public const string AdditionalLights = "_ADDITIONAL_LIGHTS";                    //使用辅助光源
-        
-        //Material Keyword String
-        public const string AlphaTestOn = "_ALPHATEST_ON";                            //AlphaTest开启
-        public const string AlphaPreMultiplyOn = "_ALPHAPREMULTIPLY_ON";              //Alpha预乘开启
-        public const string AlphaModulateOn = "_ALPHAMODULATE_ON";                    //Alpha调制开启
-        public const string SurfaceTypeTransparent = "_SURFACE_TYPE_TRANSPARENT";     //透明表面类型
-        
-        public const string useSpecularWorkflow = "_SPECULAR_SETUP";                   //使用高光工作流
-        public const string SmoothnessTextureAlbedoChannelA = "_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A";        //使用AlbedoMap的Alpha通道作为Smoothness
-        public const string MetallicSpecGlossMap = "_METALLICSPECGLOSSMAP";            //使用GlossMap 
-        public const string NormalMap = "_NORMALMAP";                                  //使用NormalMap
-        public const string OcclusionMap = "_OCCLUSIONMAP";                            //使用OcclusionMap
-        public const string ParallaxMap = "_PARALLAXMAP";                              //使用ParallaxMap
-        public const string Emission = "_EMISSION";                                    //使用自发光
-        public const string ClearCoat = "_CLEARCOAT";                                  //使用清漆层
-        public const string ClearCoatMap = "_CLEARCOATMAP";                            //使用ClearCoatMap
-        public const string ReceiveShadowsOff = "_RECEIVE_SHADOWS_OFF";                //接收阴影
-        
-        public const string SpecularHighLightsOff = "_SPECULARHIGHLIGHTS_OFF";              //不开启高光 
-        public const string EnvironmentReflectionsOff = "_ENVIRONMENTREFLECTIONS_OFF";      //不开启环境反射
-        public const string OptimizedBRDFOff = "_OPTIMIZED_BRDF_OFF";                       //不开启BRDF优化
+        /// <summary>
+        /// Use this for 2 samples per pixel.
+        /// </summary>
+        _2x = 2,
+
+        /// <summary>
+        /// Use this for 4 samples per pixel.
+        /// </summary>
+        _4x = 4,
+
+        /// <summary>
+        /// Use this for 8 samples per pixel.
+        /// </summary>
+        _8x = 8
+    }
+    
+    public enum ShadowQuality
+    {
+        /// <summary>
+        /// Disables the shadows.
+        /// </summary>
+        Disabled,
+        /// <summary>
+        /// Shadows have hard edges.
+        /// </summary>
+        HardShadows,
+        /// <summary>
+        /// Filtering is applied when sampling shadows. Shadows have smooth edges.
+        /// </summary>
+        SoftShadows,
     }
 
-    internal static class ShaderPropertyIDs
+    /// <summary>
+    /// Softness quality of soft shadows. Higher means better quality, but lower performance.
+    /// </summary>
+    public enum SoftShadowQuality
     {
-        public static readonly int _alphaToMaskAvailable = Shader.PropertyToID("_AlphaToMaskAvailable");
+        /// <summary>
+        /// Use this to choose the setting set on the pipeline asset.
+        /// </summary>
+        [InspectorName("Use settings from Render Pipeline Asset")]
+        UsePipelineSettings,
+
+        /// <summary>
+        /// Low quality soft shadows. Recommended for mobile. 4 PCF sample filtering.
+        /// </summary>
+        Low,
+        /// <summary>
+        /// Medium quality soft shadows. The default. 5x5 tent filtering.
+        /// </summary>
+        Medium,
+        /// <summary>
+        /// High quality soft shadows. Low performance due to high sample count. 7x7 tent filtering.
+        /// </summary>
+        High,
+    }
+
+    /// <summary>
+    /// This controls the size of the shadow map texture.
+    /// </summary>
+    public enum ShadowResolution
+    {
+        /// <summary>
+        /// Use this for 256x256 shadow resolution.
+        /// </summary>
+        _256 = 256,
+
+        /// <summary>
+        /// Use this for 512x512 shadow resolution.
+        /// </summary>
+        _512 = 512,
+
+        /// <summary>
+        /// Use this for 1024x1024 shadow resolution.
+        /// </summary>
+        _1024 = 1024,
+
+        /// <summary>
+        /// Use this for 2048x2048 shadow resolution.
+        /// </summary>
+        _2048 = 2048,
+
+        /// <summary>
+        /// Use this for 4096x4096 shadow resolution.
+        /// </summary>
+        _4096 = 4096,
+
+        /// <summary>
+        /// Use this for 8192x8192 shadow resolution.
+        /// </summary>
+        _8192 = 8192,
+    }
+    
+    /// <summary>
+    /// Defines the update frequency for the Volume Framework.
+    /// </summary>
+    public enum VolumeFrameworkUpdateMode
+    {
+        /// <summary>
+        /// Use this to have the Volume Framework update every frame.
+        /// </summary>
+        [InspectorName("Every Frame")]
+        EveryFrame = 0,
+
+        /// <summary>
+        /// Use this to disable Volume Framework updates or to update it manually via scripting.
+        /// </summary>
+        [InspectorName("Via Scripting")]
+        ViaScripting = 1,
+
+        /// <summary>
+        /// Use this to choose the setting set on the pipeline asset.
+        /// </summary>
+        [InspectorName("Use Pipeline Settings")]
+        UsePipelineSettings = 2,
+    }
+    
+    internal enum DefaultMaterialType
+    {
+        Default,
+        Particle
     }
 }

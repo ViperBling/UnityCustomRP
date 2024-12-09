@@ -7,7 +7,7 @@ TEXTURE2D(_BumpMap);            SAMPLER(sampler_BumpMap);
 TEXTURE2D(_EmissionMap);        SAMPLER(sampler_EmissionMap);
 float4 _BaseMap_TexelSize;
 
-struct FSurfaceData
+struct FSurfaceDataUnlit
 {
     half3 albedo;
     half3 emission;

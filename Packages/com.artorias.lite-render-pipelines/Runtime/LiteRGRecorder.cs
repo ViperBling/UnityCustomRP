@@ -20,12 +20,27 @@ namespace LiteRP
         
         private TextureHandle m_BackBufferDepthHandle = TextureHandle.nullHandle;
         private RTHandle m_BackBufferDepthRTHandle = null;
+
+        internal LiteRGRecorder()
+        {
+            InitializeMainLightShadowPass();
+        }
         
         public void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
             CameraData camData = frameData.Get<CameraData>();
+            LightData lightData = frameData.Get<LightData>();
+            ShadowData shadowData = frameData.Get<ShadowData>();
+            
+            AddSetupLightsPass(renderGraph, camData, lightData);
             CreateRenderGraphCameraRTs(renderGraph, camData);
             AddSetupCameraPropsPass(renderGraph, camData);
+            
+            if (NeedMainLightShadowPass(camData, lightData, shadowData))
+            {
+                AddMainLightShadowmapPass(renderGraph, camData, lightData, shadowData);
+                AddSetupCameraPropsPass(renderGraph, camData);
+            }
             
             CameraClearFlags clearFlags = camData.m_Camera.clearFlags;
             if (!renderGraph.nativeRenderPassesEnabled && clearFlags != CameraClearFlags.Nothing)
@@ -127,6 +142,8 @@ namespace LiteRP
         
         public void Dispose()
         {
+            ReleaseMainLightShadowPass();
+            
             RTHandles.Release(m_BackBufferColorRTHandle);
             RTHandles.Release(m_BackBufferDepthRTHandle);
             GC.SuppressFinalize(this);

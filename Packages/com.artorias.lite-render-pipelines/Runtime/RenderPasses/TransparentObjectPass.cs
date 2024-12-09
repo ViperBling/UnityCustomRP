@@ -37,12 +37,20 @@ namespace LiteRP
                 rgBuilder.SetRenderAttachmentDepth(m_BackBufferDepthHandle, AccessFlags.Write);
             }
             
+            // 阴影
+            if (m_MainLightShadowHandle.IsValid())
+            {
+                rgBuilder.UseTexture(m_MainLightShadowHandle, AccessFlags.Read);
+            }
+            
             // 设置全局渲染状态
             rgBuilder.AllowPassCulling(false);
+            rgBuilder.AllowGlobalStateModification(true);
             
             // 设置渲染函数
             rgBuilder.SetRenderFunc<TransparentObjectPassData>((transPassData, rgContext) =>
             {
+                rgContext.cmd.SetGlobalFloat(ShaderPropertyID.alphaToMaskAvailable, 1.0f);
                 rgContext.cmd.DrawRendererList(transPassData.transparentRendererListHandle);
             });
         }

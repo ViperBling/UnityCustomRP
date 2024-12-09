@@ -22,6 +22,8 @@
         [HideInInspector] _ZWrite("__zw", Float) = 1.0
         [HideInInspector] _AlphaToMask("__alphaToMask", Float) = 0.0
         
+        [ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
+        
         // Editmode props
         _QueueOffset("Queue offset", Float) = 0.0
     }
@@ -30,7 +32,7 @@
     {
         Tags
         {
-            "RenderType"="Opaque"
+            "RenderType" = "Opaque"
             "RenderPipeline" = "LiteRenderPipeline"
         }
         LOD 100
@@ -54,10 +56,16 @@
             #pragma fragment UnlitPassFragment
 
             // Material Keywords
+            #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
             #pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT
             #pragma shader_feature_local_fragment _ALPHATEST_ON
             #pragma shader_feature_local_fragment _ALPHAMODULATE_ON
             #pragma shader_feature_local_fragment _EMISSION
+
+            // LiteRP keywords
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
 
             //Unity defined keywords
             #pragma multi_compile_fog               // make fog work
@@ -67,7 +75,49 @@
             #include_with_pragmas "Packages/com.artorias.lite-render-pipelines/ShadersLibrary/DOTS.hlsl"
             
             // Includes
-            #include "Packages/com.artorias.lite-render-pipelines/ShadersLibrary/UnlitForwad.hlsl"
+            #include "UnlitInput.hlsl"
+            #include "UnlitForwad.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "ShadowCaster"
+            
+            Tags
+            {
+                "LightMode" = "ShadowCaster"
+            }
+
+            // -------------------------------------
+            // Render State Commands
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+            Cull[_Cull]
+
+            HLSLPROGRAM
+            #pragma target 2.0
+
+            // -------------------------------------
+            // Shader Stages
+            #pragma vertex ShadowPassVertex
+            #pragma fragment ShadowPassFragment
+
+            // -------------------------------------
+            // Material Keywords
+            #pragma shader_feature_local _ALPHATEST_ON
+
+            //--------------------------------------
+            // GPU Instancing
+            #pragma multi_compile_instancing
+            #include_with_pragmas "Packages/com.artorias.lite-render-pipelines/ShadersLibrary/DOTS.hlsl"
+            
+            // -------------------------------------
+            // Includes
+            #include "UnlitInput.hlsl"
+            #include "Packages/com.artorias.lite-render-pipelines/ShadersLibrary/ShadowCasterPass.hlsl"
+            
             ENDHLSL
         }
     }
