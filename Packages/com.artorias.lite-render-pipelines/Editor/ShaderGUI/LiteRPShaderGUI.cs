@@ -5,6 +5,7 @@ using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Rendering;
 using LiteRPStyles = LiteRP.Editor.LiteRPShaderGUIUtilities.Styles;
+using static LiteRP.Editor.ShaderUtils;
 
 namespace LiteRP.Editor
 {
@@ -245,14 +246,14 @@ namespace LiteRP.Editor
         
         public override void AssignNewShaderToMaterial(Material material, Shader oldShader, Shader newShader)
         {
-            // // Clear all keywords for fresh start
-            // // Note: this will nuke user-selected custom keywords when they change shaders
-            // material.shaderKeywords = null;
-            //
-            // base.AssignNewShaderToMaterial(material, oldShader, newShader);
-            //
-            // // Setup keywords based on the new shader
-            // UpdateMaterial(material, ShaderUtils.MaterialUpdateType.ChangedAssignedShader);
+            // Clear all keywords for fresh start
+            // Note: this will nuke user-selected custom keywords when they change shaders
+            material.shaderKeywords = null;
+            
+            base.AssignNewShaderToMaterial(material, oldShader, newShader);
+            
+            // Setup keywords based on the new shader
+            UpdateMaterial(material, ShaderUtils.MaterialUpdateType.ChangedAssignedShader);
         }
     }
 }

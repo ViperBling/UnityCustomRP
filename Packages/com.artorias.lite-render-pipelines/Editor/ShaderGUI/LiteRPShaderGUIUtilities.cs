@@ -277,5 +277,42 @@ namespace LiteRP.Editor
             EditorGUI.indentLevel -= indentLevel;
             EditorGUI.EndDisabledGroup();
         }
+        
+        public static Rect TextureColorProperties(MaterialEditor materialEditor, GUIContent label, MaterialProperty textureProp, MaterialProperty colorProp, bool hdr = false)
+        {
+            MaterialEditor.BeginProperty(textureProp);
+            if (colorProp != null)
+                MaterialEditor.BeginProperty(colorProp);
+
+            Rect rect = EditorGUILayout.GetControlRect();
+            EditorGUI.showMixedValue = textureProp.hasMixedValue;
+            materialEditor.TexturePropertyMiniThumbnail(rect, textureProp, label.text, label.tooltip);
+            EditorGUI.showMixedValue = false;
+
+            if (colorProp != null)
+            {
+                EditorGUI.BeginChangeCheck();
+                EditorGUI.showMixedValue = colorProp.hasMixedValue;
+                int indentLevel = EditorGUI.indentLevel;
+                EditorGUI.indentLevel = 0;
+                Rect rectAfterLabel = new Rect(rect.x + EditorGUIUtility.labelWidth, rect.y,
+                    EditorGUIUtility.fieldWidth, EditorGUIUtility.singleLineHeight);
+                var col = EditorGUI.ColorField(rectAfterLabel, GUIContent.none, colorProp.colorValue, true,
+                    false, hdr);
+                EditorGUI.indentLevel = indentLevel;
+                if (EditorGUI.EndChangeCheck())
+                {
+                    materialEditor.RegisterPropertyChangeUndo(colorProp.displayName);
+                    colorProp.colorValue = col;
+                }
+                EditorGUI.showMixedValue = false;
+            }
+
+            if (colorProp != null)
+                MaterialEditor.EndProperty();
+            MaterialEditor.EndProperty();
+
+            return rect;
+        }
     }
 }

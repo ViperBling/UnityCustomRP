@@ -18,7 +18,7 @@ namespace LiteRP
         protected override List<IRenderPipelineGraphicsSettings> settingsList => m_Settings.settingsList;
         
 #if UNITY_EDITOR
-        internal static string m_DefaultPath => $"Package/com.artorias.lite-render-pipelines/Settings/{m_DefaultAssetName}.asset";
+        internal static string m_DefaultPath => $"Assets/LiteRPSettings/{m_DefaultAssetName}.asset";
 
         internal static LiteRPGlobalSettings Ensure(bool canCreateNewAsset = true)
         {
