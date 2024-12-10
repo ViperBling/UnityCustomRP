@@ -1,5 +1,4 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 
@@ -32,7 +31,7 @@ namespace LiteRP
 
                 ClearRenderingState(cmd);
                 SetShaderTimeValues(cmd, time, deltaTime, smoothDeltaTime);
-                });
+            });
         }
         private void ClearRenderingState(IBaseCommandBuffer cmd)
         {

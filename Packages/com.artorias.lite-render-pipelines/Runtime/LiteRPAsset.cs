@@ -95,6 +95,17 @@ namespace LiteRP
             set => m_NumIterationsEnclosingSphere = value;
         }
         #endregion
+
+        #region LightingSettings
+
+        internal const int k_MaxPerObjectLights = 8;
+        [SerializeField] private int m_AdditionalLightPerObjectLimit = 4;
+        public int maxAdditionalLightsCount
+        {
+            get => m_AdditionalLightPerObjectLimit;
+            set => m_AdditionalLightPerObjectLimit = Mathf.Max(0, Math.Min(value, k_MaxPerObjectLights));
+        }
+        #endregion
         
         #region ShadowSettings
         [SerializeField] bool m_MainLightShadowEnable = true;
@@ -224,6 +235,17 @@ namespace LiteRP
             set => m_VolumeProfile = value;
         }
         #endregion
+        
+        /// <summary>
+        /// Ensures Global Settings are ready and registered into GraphicsSettings
+        /// </summary>
+        protected override void EnsureGlobalSettings()
+        {
+            base.EnsureGlobalSettings();
+#if UNITY_EDITOR
+            LiteRPGlobalSettings.Ensure();
+#endif
+        }
 
         protected override RenderPipeline CreatePipeline()
         {

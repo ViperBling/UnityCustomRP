@@ -76,7 +76,7 @@ namespace LiteRP
                 if (shadowCullingInfos.IsSliceValid(cascadeIndex))
                 {
                     ref readonly ShadowSliceData sliceData = ref shadowCullingInfos.shadowSlices.UnsafeElementAt(cascadeIndex);
-                    m_CascadeSplitDistances[cascadeIndex] = sliceData.splitData.cullingSphere;
+                    m_CascadeSplitDistances[cascadeIndex] = sliceData.m_SplitData.cullingSphere;
                     m_CascadeSlices[cascadeIndex] = sliceData;
                 }
             }
@@ -96,7 +96,7 @@ namespace LiteRP
             bool softShadowsSupported = shadowLight.light.shadows == LightShadows.Soft && shadowData.m_SupportSoftShadows;
             
             int cascadeCount = shadowData.m_MainLightShadowCascadesCount;
-            for (int i = 0; i < cascadeCount; i++) m_MainLightShadowMatrices[i] = m_CascadeSlices[i].shadowTransform;
+            for (int i = 0; i < cascadeCount; i++) m_MainLightShadowMatrices[i] = m_CascadeSlices[i].m_ShadowTransform;
             
             // We setup and additional a no-op WorldToShadow matrix in the last index
             // because the ComputeCascadeIndex function in Shadows.hlsl can return an index
@@ -187,7 +187,7 @@ namespace LiteRP
                 for (int cascadeIndex = 0; cascadeIndex < shadowPassData.shadowData.m_MainLightShadowCascadesCount; ++cascadeIndex)
                 {
                     var shadowSliceData = m_CascadeSlices[cascadeIndex];
-                    Vector4 shadowBias = ShadowUtils.GeMainLightShadowBias(ref shadowLight, shadowPassData.shadowData.m_MainLightShadowBias, shadowPassData.shadowData.m_SupportSoftShadows, shadowSliceData.projectionMatrix, shadowSliceData.resolution);
+                    Vector4 shadowBias = ShadowUtils.GeMainLightShadowBias(ref shadowLight, shadowPassData.shadowData.m_MainLightShadowBias, shadowPassData.shadowData.m_SupportSoftShadows, shadowSliceData.m_ProjectionMatrix, shadowSliceData.m_Resolution);
                     rgContext.cmd.SetGlobalVector(ShaderPropertyID.shadowBias, shadowBias);
 
                     // Light direction is currently used in shadow caster pass to apply shadow normal offset (normal bias).
@@ -201,8 +201,8 @@ namespace LiteRP
                     // 绘制Shadow RenderList
                     RendererListHandle shadowRendererListHandle = shadowPassData.shadowRendererListHandles[cascadeIndex];
                     rgContext.cmd.SetGlobalDepthBias(1.0f, 2.5f); // these values match HDRP defaults (see https://github.com/Unity-Technologies/Graphics/blob/9544b8ed2f98c62803d285096c91b44e9d8cbc47/com.unity.render-pipelines.high-definition/Runtime/Lighting/Shadow/HDShadowAtlas.cs#L197 )
-                    rgContext.cmd.SetViewport(new Rect(shadowSliceData.offsetX, shadowSliceData.offsetY, shadowSliceData.resolution, shadowSliceData.resolution));
-                    rgContext.cmd.SetViewProjectionMatrices(shadowSliceData.viewMatrix, shadowSliceData.projectionMatrix);
+                    rgContext.cmd.SetViewport(new Rect(shadowSliceData.m_OffsetX, shadowSliceData.m_OffsetY, shadowSliceData.m_Resolution, shadowSliceData.m_Resolution));
+                    rgContext.cmd.SetViewProjectionMatrices(shadowSliceData.m_ViewMatrix, shadowSliceData.m_ProjectionMatrix);
                     if(shadowRendererListHandle.IsValid())
                     {
                         rgContext.cmd.DrawRendererList(shadowRendererListHandle);

@@ -31,6 +31,8 @@ namespace LiteRP
                 rgBuilder.SetRenderAttachmentDepth(m_BackBufferDepthHandle, AccessFlags.Write);
             }
             
+            rgBuilder.AllowPassCulling(false);
+            
             rgBuilder.SetRenderFunc<SkyboxPassData>((skyboxPassData, rgContext) =>
             {
                 rgContext.cmd.DrawRendererList(skyboxPassData.skyboxRenderListHandle);

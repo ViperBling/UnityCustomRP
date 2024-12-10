@@ -55,7 +55,6 @@ namespace LiteRP
             {
 #if UNITY_EDITOR
                 float deltaTime = Time.deltaTime;
-                // 我所知道的deltaTime为0有效的唯一情况是Time.timeScale为0
                 if (deltaTime > 0.0f || Time.timeScale == 0.0f)
                     s_MostRecentValidDeltaTime = deltaTime;
                 return s_MostRecentValidDeltaTime;
@@ -67,7 +66,7 @@ namespace LiteRP
 #if UNITY_EDITOR
         static readonly string[] s_ShaderGUIDs =
         {
-            "a9316d8cae61a45d6bf26d5d6216b3c4",
+            "60e00b174bd84ad9b2715b7698df95f1",
             // "33584a15c90854d78b2b83b6df0ee27d",
             // "31f500cd09a64ceb9ec3b7ff041dc695",
         };

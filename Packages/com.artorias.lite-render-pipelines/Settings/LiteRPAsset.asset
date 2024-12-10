@@ -21,9 +21,10 @@ MonoBehaviour:
   m_AntiAliasing: 1
   m_ConservativeEnclosingSphere: 1
   m_NumIterationsEnclosingSphere: 64
+  m_AdditionalLightPerObjectLimit: 4
   m_MainLightShadowEnable: 1
-  m_MainLightShadowmapResolution: 2048
-  m_MainLightShadowDistance: 50
+  m_MainLightShadowmapResolution: 4096
+  m_MainLightShadowDistance: 80
   m_MainLightShadowCascadesCount: 4
   m_MainLightCascade2Split: 0.25
   m_MainLightCascade3Split: {x: 0.1, y: 0.3}
@@ -32,7 +33,7 @@ MonoBehaviour:
   m_MainLightShadowDepthBias: 1
   m_MainLightShadowNormalBias: 1
   m_AnyShadowsSupported: 1
-  m_SoftShadowSupported: 0
+  m_SoftShadowSupported: 1
   m_SoftShadowQuality: 2
   m_VolumeFrameworkUpdateMode: 0
   m_VolumeProfile: {fileID: 0}

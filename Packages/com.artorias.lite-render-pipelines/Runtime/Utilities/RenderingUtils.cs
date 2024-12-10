@@ -7,11 +7,9 @@ namespace LiteRP
 {
     public static class RenderingUtils
     {
-        private static Dictionary<RenderTextureFormat, bool> m_RenderTextureFormatSupport =
-            new Dictionary<RenderTextureFormat, bool>();
+        private static Dictionary<RenderTextureFormat, bool> m_RenderTextureFormatSupport = new Dictionary<RenderTextureFormat, bool>();
         
         static Material s_ErrorMaterial;
-        
         static Material errorMaterial
         {
             get

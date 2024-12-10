@@ -33,6 +33,8 @@ namespace LiteRP
                 rgBuilder.SetRenderAttachmentDepth(m_BackBufferDepthHandle, AccessFlags.Write);
             }
             
+            rgBuilder.AllowPassCulling(false);
+            
             rgBuilder.SetRenderFunc<ClearRTPassData>((clearRTPassData, rgContext) =>
             {
                 rgContext.cmd.ClearRenderTarget(clearRTPassData.clearFlags, clearRTPassData.clearColor, 1, 0);

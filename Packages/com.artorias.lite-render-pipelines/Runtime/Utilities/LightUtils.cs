@@ -106,9 +106,13 @@ namespace LiteRP
             // Particle lights will use an inline function
             float cosInnerAngle;
             if (innerSpotAngle.HasValue)
+            {
                 cosInnerAngle = Mathf.Cos(innerSpotAngle.Value * Mathf.Deg2Rad * 0.5f);
+            }
             else
+            {
                 cosInnerAngle = Mathf.Cos((2.0f * Mathf.Atan(Mathf.Tan(spotAngle * 0.5f * Mathf.Deg2Rad) * (64.0f - 18.0f) / 64.0f)) * 0.5f);
+            }
             float smoothAngleRange = Mathf.Max(0.001f, cosInnerAngle - cosOuterAngle);
             float invAngleRange = 1.0f / smoothAngleRange;
             float add = -cosOuterAngle * invAngleRange;

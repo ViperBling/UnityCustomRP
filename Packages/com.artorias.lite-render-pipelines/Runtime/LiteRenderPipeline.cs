@@ -5,6 +5,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 
 using LiteRP.FrameData;
+using LiteRP.AdditionalData;
 
 namespace LiteRP
 {
@@ -13,6 +14,7 @@ namespace LiteRP
         public const string k_ShaderTagName = "LiteRenderPipeline";
         
         private LiteRPAsset m_RPAsset = null;
+        private LiteRPGlobalSettings m_GlobalSettings = null;
         private RenderGraph m_RenderGraph = null;
         private LiteRGRecorder m_LiteRGRecorder = null;
         private ContextContainer m_ContextContainer = null;
@@ -22,17 +24,24 @@ namespace LiteRP
             get => GraphicsSettings.currentRenderPipeline as LiteRPAsset;
         }
 
+        public override RenderPipelineGlobalSettings defaultSettings => m_GlobalSettings;
+
         public LiteRenderPipeline(LiteRPAsset rpAsset)
         {
             m_RPAsset = rpAsset;
+            m_GlobalSettings = LiteRPGlobalSettings.instance;
             InitSupportedRenderingFeatures(rpAsset);
             InitializeRPSettings();
+            RTHandles.Initialize(Screen.width, Screen.height);
+            ShaderGlobalKeywords.InitializeShaderGlobalKeywords();
+            
             InitializeRenderGraph();
         }
         
         protected override void Dispose(bool bDispose)
         {
             CleanupRenderGraph();
+            ResetSupportedRenderingFeatures();
             base.Dispose(bDispose);
         }
         
@@ -53,7 +62,8 @@ namespace LiteRP
             
             for (int i = 0; i < cameras.Count; i++)
             {
-                RenderCamera(context, cameras[i]);
+                Camera camera = cameras[i];
+                RenderCamera(context, camera);
             }
             // RG结束当前帧
             m_RenderGraph.EndFrame();
@@ -93,11 +103,9 @@ namespace LiteRP
             GraphicsSettings.lightsUseLinearIntensity = (QualitySettings.activeColorSpace == ColorSpace.Linear);
             GraphicsSettings.lightsUseColorTemperature = true;
         }
-
-
+        
         private void InitializeRenderGraph()
         {
-            RTHandles.Initialize(Screen.width, Screen.height);
             m_RenderGraph = new RenderGraph("LiteRPRenderGraph");
             m_RenderGraph.nativeRenderPassesEnabled = LiteRPRenderGraphUtils.IsNativeRenderPassSupport();
             m_LiteRGRecorder = new LiteRGRecorder();
@@ -133,8 +141,7 @@ namespace LiteRP
         
         private bool PrepareFrameData(ScriptableRenderContext context, Camera camera)
         {
-            ScriptableCullingParameters cullingParameters;
-            if (!camera.TryGetCullingParameters(out cullingParameters)) return false;
+            if (!camera.TryGetCullingParameters(out var cullingParameters)) return false;
             SetupCullingParameters(ref cullingParameters, camera);
             CullingResults cullingResults = context.Cull(ref cullingParameters);
             
@@ -144,6 +151,13 @@ namespace LiteRP
             bool anyShadowsEnabled = m_RPAsset.mainLightShadowEnabled;
             cameraData.m_MaxShadowDistance = Mathf.Min(m_RPAsset.mainLightShadowDistance, camera.farClipPlane);
             cameraData.m_MaxShadowDistance = (anyShadowsEnabled && cameraData.m_MaxShadowDistance >= camera.nearClipPlane) ? cameraData.m_MaxShadowDistance : 0.0f;
+            AdditionalCameraData additionalCameraData = null;
+            camera.gameObject.TryGetComponent(out additionalCameraData);
+            if (additionalCameraData != null)
+            {
+                cameraData.m_PostProcessEnabled = additionalCameraData.renderPostProcessing;
+                cameraData.m_MaxShadowDistance = additionalCameraData.renderShadows ? cameraData.m_MaxShadowDistance : 0.0f;
+            }
             
             //初始化灯光帧数据
             LightData lightData = m_ContextContainer.GetOrCreate<LightData>();
@@ -185,15 +199,19 @@ namespace LiteRP
             }
             else
             {
-                // // 初始化灯光附加管线数据
-                // AdditionalLightData data = null;
-                // if (light != null)
-                //     light.gameObject.TryGetComponent(out data);
-                // if (data && !data.usePipelineSettings)
-                //     shadowData.mainLightShadowBias = new Vector4(light.shadowBias, light.shadowNormalBias, 0.0f, 0.0f);  
-                // else
-                //     shadowData.mainLightShadowBias = new Vector4(m_RPAsset.mainLightShadowDepthBias, m_RPAsset.mainLightShadowNormalBias, 0.0f, 0.0f);
-                // shadowData.mainLightShadowmapResolution = m_RPAsset.mainLightShadowmapResolution;
+                // 初始化灯光附加管线数据
+                AdditionalLightData data = null;
+                if (light != null) light.gameObject.TryGetComponent(out data);
+                
+                if (data && !data.usePipelineSettings)
+                {
+                    shadowData.m_MainLightShadowBias = new Vector4(light.shadowBias, light.shadowNormalBias, 0.0f, 0.0f);
+                }
+                else
+                {
+                    shadowData.m_MainLightShadowBias = new Vector4(m_RPAsset.mainLightShadowDepthBias, m_RPAsset.mainLightShadowNormalBias, 0.0f, 0.0f);
+                }
+                shadowData.m_MainLightShadowResolution = m_RPAsset.mainLightShadowmapResolution;
             }
             shadowData.m_SupportSoftShadows = m_RPAsset.supportsSoftShadows && shadowData.m_SupportMainLightShadow;
             
@@ -292,7 +310,7 @@ namespace LiteRP
             };
 #endif
 
-            // SupportedRenderingFeatures.active.supportsHDR = pipelineAsset.supportsHDR;
+            SupportedRenderingFeatures.active.supportsHDR = pipelineAsset.supportsHDR;
             SupportedRenderingFeatures.active.rendersUIOverlay = false;
         }
 

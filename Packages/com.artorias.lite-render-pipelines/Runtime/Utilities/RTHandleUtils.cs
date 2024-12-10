@@ -67,8 +67,7 @@ namespace LiteRP
         internal bool TryGetResource(in TextureDesc texDesc, out RTHandle resource, bool usePool = true)
         {
             int hashCode = GetHashCodeWithNameHash(texDesc);
-            if (usePool && m_ResourcePool.TryGetValue(hashCode,
-                    out SortedList<int, (RTHandle resource, int frameIndex)> list) && list.Count > 0)
+            if (usePool && m_ResourcePool.TryGetValue(hashCode, out SortedList<int, (RTHandle resource, int frameIndex)> list) && list.Count > 0)
             {
                 resource = list.Values[list.Count - 1].resource;
                 list.RemoveAt(list.Count - 1);
