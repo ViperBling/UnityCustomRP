@@ -535,10 +535,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 645974588}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6086d0821af472da2605a5618925f27, type: 3}
+  m_Script: {fileID: 11500000, guid: 7735e235c90346c4b8d0aa60337a99e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CurrentPipelineAsset: {fileID: 11400000, guid: 8ab9f18e23e4a0e4883e17eeb9d9ad4d, type: 2}
+  m_RenderPostProcessing: 0
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_RenderShadows: 1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
 --- !u!1 &762540565
 GameObject:
   m_ObjectHideFlags: 0
