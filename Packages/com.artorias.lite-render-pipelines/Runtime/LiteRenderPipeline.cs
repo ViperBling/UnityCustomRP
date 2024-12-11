@@ -164,7 +164,7 @@ namespace LiteRP
             var visibleLights = cullingResults.visibleLights;
             lightData.m_MainLightIndex = LightUtils.GetMainLightIndex(visibleLights);
             lightData.m_AdditionalLightsCount = Math.Min((lightData.m_MainLightIndex != -1) ? visibleLights.Length - 1 : visibleLights.Length, LightUtils.maxVisibleAdditionalLights);
-            // lightData.m_MaxPerObjectAdditionalLightsCount = Math.Min(m_RPAsset.maxAdd, LiteRPAsset.k_MaxPerObjectLights);
+            lightData.m_MaxPerObjectAdditionalLightsCount = Math.Min(m_RPAsset.maxAdditionalLightsCount, LiteRPAsset.k_MaxPerObjectLights);
             lightData.m_MaxPerObjectAdditionalLightsCount = 0;
             lightData.m_VisibleLights = visibleLights;
             

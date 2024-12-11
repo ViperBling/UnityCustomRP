@@ -35,12 +35,12 @@ namespace LiteRP
             AddSetupLightsPass(renderGraph, camData, lightData);
             CreateRenderGraphCameraRTs(renderGraph, camData);
             AddInitRenderGraphFramePass(renderGraph);
-            AddSetupCameraPropsPass(renderGraph, camData);
+            AddSetupCameraPropertiesPass(renderGraph, camData);
             
             if (NeedMainLightShadowPass(camData, lightData, shadowData))
             {
                 AddMainLightShadowmapPass(renderGraph, camData, lightData, shadowData);
-                AddSetupCameraPropsPass(renderGraph, camData);
+                AddSetupCameraPropertiesPass(renderGraph, camData);
             }
             
             CameraClearFlags clearFlags = camData.m_Camera.clearFlags;
@@ -66,8 +66,7 @@ namespace LiteRP
         {
             var cameraTargetTexture = camData.m_Camera.targetTexture;
             bool isBuildInTexture = cameraTargetTexture == null;
-
-            bool isCameraOffscreenDepth = !isBuildInTexture && camData.m_Camera.targetTexture.format == RenderTextureFormat.Depth;
+            bool isCameraOffscreenDepth = !isBuildInTexture && cameraTargetTexture.format == RenderTextureFormat.Depth;
 
             RenderTargetIdentifier targetColorID = isBuildInTexture ? BuiltinRenderTextureType.CameraTarget : new RenderTargetIdentifier(cameraTargetTexture);
             if (m_BackBufferColorRTHandle == null)

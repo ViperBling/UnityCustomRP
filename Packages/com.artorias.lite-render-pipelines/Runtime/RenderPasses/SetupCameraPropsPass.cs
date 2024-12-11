@@ -16,7 +16,7 @@ namespace LiteRP
             internal CameraData cameraData;
         }
 
-        private void AddSetupCameraPropsPass(RenderGraph rg, CameraData cameraData)
+        private void AddSetupCameraPropertiesPass(RenderGraph rg, CameraData cameraData)
         {
             using var rgBuilder = rg.AddRasterRenderPass<SetupCameraPropsData>(s_SetupCameraPropsPassSampler.name, out var passData, s_SetupCameraPropsPassSampler);
             
