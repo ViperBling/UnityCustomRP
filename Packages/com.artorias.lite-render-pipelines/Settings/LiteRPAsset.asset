@@ -24,16 +24,16 @@ MonoBehaviour:
   m_AdditionalLightPerObjectLimit: 4
   m_MainLightShadowEnable: 1
   m_MainLightShadowmapResolution: 4096
-  m_MainLightShadowDistance: 80
+  m_MainLightShadowDistance: 50
   m_MainLightShadowCascadesCount: 4
   m_MainLightCascade2Split: 0.25
   m_MainLightCascade3Split: {x: 0.1, y: 0.3}
   m_MainLightCascade4Split: {x: 0.067, y: 0.2, z: 0.467}
   m_MainLightCascadeBorder: 0.2
-  m_MainLightShadowDepthBias: 1
-  m_MainLightShadowNormalBias: 1
+  m_MainLightShadowDepthBias: 0.39
+  m_MainLightShadowNormalBias: 0.34
   m_AnyShadowsSupported: 1
   m_SoftShadowSupported: 1
-  m_SoftShadowQuality: 2
+  m_SoftShadowQuality: 3
   m_VolumeFrameworkUpdateMode: 0
   m_VolumeProfile: {fileID: 0}
