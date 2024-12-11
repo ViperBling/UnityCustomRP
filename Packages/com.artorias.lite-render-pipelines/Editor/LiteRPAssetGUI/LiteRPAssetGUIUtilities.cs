@@ -145,13 +145,14 @@ namespace LiteRP.Editor
                     
                     serialized.mainLightShadowDepthBias.floatValue = EditorGUILayout.Slider(Styles.mainLightShadowDepthBiasText, serialized.mainLightShadowDepthBias.floatValue, 0.0f, LiteRPAsset.k_MaxShadowBias);
                     serialized.mainLightShadowNormalBias.floatValue = EditorGUILayout.Slider(Styles.mainLightShadowNormalBiasText, serialized.mainLightShadowNormalBias.floatValue, 0.0f, LiteRPAsset.k_MaxShadowBias);
-                }
-                EditorGUILayout.PropertyField(serialized.supportsSoftShadows, Styles.supportsSoftShadowsText);
-                if (serialized.supportsSoftShadows.boolValue)
-                {
-                    EditorGUI.indentLevel++;
-                    DrawShadowsSoftShadowQuality(serialized, ownerEditor);
-                    EditorGUI.indentLevel--;
+                    // Soft Shadows
+                    EditorGUILayout.PropertyField(serialized.supportsSoftShadows, Styles.supportsSoftShadowsText);
+                    if (serialized.supportsSoftShadows.boolValue)
+                    {
+                        EditorGUI.indentLevel++;
+                        DrawShadowsSoftShadowQuality(serialized, ownerEditor);
+                        EditorGUI.indentLevel--;
+                    }
                 }
                 EditorGUI.EndDisabledGroup();
             }
