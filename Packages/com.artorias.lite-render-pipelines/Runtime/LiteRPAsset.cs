@@ -14,6 +14,19 @@ namespace LiteRP
         public override string renderPipelineShaderTag => LiteRenderPipeline.k_ShaderTagName;
         
         #region RenderPipelineSettings
+
+        [SerializeField] private RenderingPath m_RenderingPath = RenderingPath.Forward;
+        public RenderingPath renderingPath
+        {
+            get => m_RenderingPath;
+            set
+            {
+                if (value == m_RenderingPath) return;
+                m_RenderingPath = value;
+                OnValidate();
+            }
+        }
+        
         [SerializeField] bool m_UseSRPBatcher = true;
         public bool UseSRPBatcher
         {

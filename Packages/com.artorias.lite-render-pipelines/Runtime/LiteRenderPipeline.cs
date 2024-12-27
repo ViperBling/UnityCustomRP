@@ -108,7 +108,7 @@ namespace LiteRP
         {
             m_RenderGraph = new RenderGraph("LiteRPRenderGraph");
             m_RenderGraph.nativeRenderPassesEnabled = LiteRPRenderGraphUtils.IsNativeRenderPassSupport();
-            m_LiteRGRecorder = new LiteRGRecorder();
+            m_LiteRGRecorder = new LiteRGRecorder(m_RPAsset.renderingPath);
             m_ContextContainer = new ContextContainer();
         }
         

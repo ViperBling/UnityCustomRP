@@ -5,6 +5,7 @@ namespace LiteRP.Editor
 {
     internal static class LiteRPAssetProperties
     {
+        public static readonly string RenderingPath = "m_RenderingPath";
         public static readonly string UseSRPBatcher = "m_UseSRPBatcher";
         public static readonly string UseGPUDriven = "m_GPUDrivenMode";
         public static readonly string UseSmallMeshScreenPercentage = "m_SmallMeshScreenPercentage";
@@ -39,6 +40,7 @@ namespace LiteRP.Editor
         public SerializedObject serializedObject { get; }
         
         // Pipeline Settings
+        public SerializedProperty renderingPath { get; }
         public SerializedProperty srpBatcher { get; }
         public SerializedProperty gpuDrivenMode { get; }
         public SerializedProperty smallMeshScreenPercentage { get; }
@@ -76,6 +78,7 @@ namespace LiteRP.Editor
             this.serializedObject = serializedObject;
             
             // Pipeline Settings
+            renderingPath = serializedObject.FindProperty(LiteRPAssetProperties.RenderingPath);
             srpBatcher = serializedObject.FindProperty(LiteRPAssetProperties.UseSRPBatcher);
             gpuDrivenMode = serializedObject.FindProperty(LiteRPAssetProperties.UseGPUDriven);
             smallMeshScreenPercentage = serializedObject.FindProperty(LiteRPAssetProperties.UseSmallMeshScreenPercentage);

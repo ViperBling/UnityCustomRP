@@ -24,6 +24,7 @@ namespace LiteRP.Editor
             public static GUIContent shadowSettingsText = EditorGUIUtility.TrTextContent("ShadowSettings", "Settings for the shadow.");
             
             // RenderPipelineSettings
+            public static GUIContent renderingPathText = EditorGUIUtility.TrTextContent("Rendering Path", "The rendering path.");
             public static GUIContent srpBatcherText = EditorGUIUtility.TrTextContent("SRP Batcher", "Enable the SRP Batcher.");
             public static GUIContent gpuDrivenModeText = EditorGUIUtility.TrTextContent("GPU Driven Mode", "Enable the GPU Driven Mode.");
             public static GUIContent smallMeshScreenPercentageText = EditorGUIUtility.TrTextContent("Small Mesh Screen Percentage", "The percentage of the screen that small meshes cover.");
@@ -69,6 +70,7 @@ namespace LiteRP.Editor
             if (ownerEditor is LiteRPAssetEditor liteRPAssetEditor)
             {
                 EditorGUILayout.Space();
+                EditorGUILayout.PropertyField(properties.renderingPath, Styles.renderingPathText);
                 EditorGUILayout.PropertyField(properties.srpBatcher, Styles.srpBatcherText);
                 EditorGUILayout.PropertyField(properties.gpuDrivenMode, Styles.gpuDrivenModeText);
 

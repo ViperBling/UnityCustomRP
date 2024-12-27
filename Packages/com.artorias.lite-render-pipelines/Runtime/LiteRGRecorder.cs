@@ -14,6 +14,8 @@ namespace LiteRP
         {
             new ShaderTagId("SRPDefaultUnlit"),
         };
+
+        private RenderingPath m_RenderingPath = RenderingPath.Forward;
         
         private TextureHandle m_BackBufferColorHandle = TextureHandle.nullHandle;
         private RTHandle m_BackBufferColorRTHandle = null;
@@ -21,8 +23,9 @@ namespace LiteRP
         private TextureHandle m_BackBufferDepthHandle = TextureHandle.nullHandle;
         private RTHandle m_BackBufferDepthRTHandle = null;
 
-        internal LiteRGRecorder()
+        internal LiteRGRecorder(RenderingPath renderingPath)
         {
+            m_RenderingPath = renderingPath;
             InitializeMainLightShadowPass();
         }
         
@@ -48,13 +51,27 @@ namespace LiteRP
             {
                 AddClearRTPass(renderGraph, camData);
             }
-            AddOpaqueObjectPass(renderGraph, camData);
-            if (clearFlags == CameraClearFlags.Skybox && RenderSettings.skybox != null)
+
+            switch (m_RenderingPath)
             {
-                AddSkyboxPass(renderGraph, camData);
-            }
+                case RenderingPath.Forward:
+                {
+                    AddOpaqueObjectPass(renderGraph, camData);
+                    if (clearFlags == CameraClearFlags.Skybox && RenderSettings.skybox != null)
+                    {
+                        AddSkyboxPass(renderGraph, camData);
+                    }
             
-            AddTransparentObjectPass(renderGraph, camData);
+                    AddTransparentObjectPass(renderGraph, camData);
+                    break;
+                }
+                case RenderingPath.Deferred:
+                {
+                    
+                    break;
+                }
+                default: break;
+            }
             
 #if UNITY_EDITOR
             AddEditorGizmoPass(renderGraph, camData, GizmoSubset.PreImageEffects);

@@ -6,6 +6,23 @@ namespace LiteRP
     /// Options for setting MSAA Quality.
     /// This defines how many samples URP computes per pixel for evaluating the effect.
     /// </summary>
+    public enum RenderingPath
+    {
+        /// <summary>
+        /// Use this for Forward rendering.
+        /// </summary>
+        Forward = 0,
+
+        /// <summary>
+        /// Use this for Deferred rendering.
+        /// </summary>
+        Deferred = 1
+    }
+    
+    /// <summary>
+    /// Options for setting MSAA Quality.
+    /// This defines how many samples URP computes per pixel for evaluating the effect.
+    /// </summary>
     public enum MsaaQuality
     {
         /// <summary>
